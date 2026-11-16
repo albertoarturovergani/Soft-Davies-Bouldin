@@ -133,6 +133,20 @@ Using the actual eight 2018 archive datasets (all with `Data` and one-hot `T`), 
 
 ![Recovered number of clusters](results/figures/selected_k.png)
 
+## Recovery of the ground-truth cluster count
+
+Each matrix compares **true cluster count (rows)** with the **optimal cluster count selected by an index (columns)**. Each nonzero cell counts benchmark datasets, not individual samples. The diagonal indicates the correct number of clusters; off-diagonal cells indicate errors. Each dataset contributes one selection per criterion, obtained by minimizing the index averaged across **3 random seeds** for candidate **K = 2–10**. These are results of the modern Python reimplementation, not the complete 100-run experiment from 2018.
+
+![Confusion matrices of true versus selected cluster count](results/figures/cluster_count_confusion_matrices.svg)
+
+| Validation criterion | Correct K | Incorrect K | Recovery rate |
+|:--|--:|--:|--:|
+| Davies–Bouldin on hardened Fuzzy C-means (DB FCM*) | **5 / 8** | 3 / 8 | **62.5%** |
+| Davies–Bouldin on K-means (DB K-means) | **4 / 8** | 4 / 8 | **50.0%** |
+| Soft Davies–Bouldin on Fuzzy C-means (SDB FCM) | **3 / 8** | 5 / 8 | **37.5%** |
+
+For the underlying per-dataset selections, see [BENCHMARKS.md](docs/BENCHMARKS.md) and [the raw benchmark CSV](results/benchmark_original_raw_3seeds_k2-10.csv). **Recovering the correct K does not imply correct assignment of individual samples**, and a lower SDB score than a crisp DB score does not establish superiority because the indices have different definitions and scales.
+
 ## Testing
 
 `pytest -q` covers analytic toy examples, cluster-order permutation, translation/scale invariance, degenerate inputs, FCM membership constraints, and a scikit-learn reference check. `scripts/matlab/test_sdb.m` checks MATLAB against the same analytic fixture. MATLAB has not been executed in the authoring environment; run it in your local MATLAB installation or CI runner.
@@ -140,6 +154,19 @@ Using the actual eight 2018 archive datasets (all with `Data` and one-hot `T`), 
 ## Citation
 
 If SDB contributes to your work, please cite the 2018 paper using [`CITATION.cff`](CITATION.cff) or [`docs/CITATION.bib`](docs/CITATION.bib). Paper DOI: [10.1109/FUZZ-IEEE.2018.8491581](https://doi.org/10.1109/FUZZ-IEEE.2018.8491581).
+
+**BibTeX (copy and paste):**
+
+```bibtex
+@inproceedings{VerganiBinaghi2018SDB,
+  author = {Vergani, Alberto Arturo and Binaghi, Elisabetta},
+  title = {A Soft Davies-Bouldin Separation Measure},
+  booktitle = {2018 IEEE International Conference on Fuzzy Systems (FUZZ-IEEE)},
+  year = {2018},
+  doi = {10.1109/FUZZ-IEEE.2018.8491581},
+  publisher = {IEEE}
+}
+```
 
 ## Rights and licensing
 

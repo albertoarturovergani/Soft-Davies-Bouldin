@@ -1,0 +1,15 @@
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.egg-info/
+.venv/
+.DS_Store
+.mypy_cache/
+.pytype/
+coverage.xml
+.coverage
+htmlcov/
+data/original/*
+!data/original/.gitkeep
+data/benchmarks/
+results/recomputed/

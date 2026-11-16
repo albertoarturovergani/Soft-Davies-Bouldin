@@ -1,0 +1,13 @@
+root = fileparts(fileparts(fileparts(mfilename('fullpath'))));
+addpath(fullfile(root,'scripts','matlab'));
+X = [0;1;4;5];
+centers = [0.5;4.5];
+U = [1 0;1 0;0 1;0 1];
+published = sdb.soft_davies_bouldin(X,centers,U);
+assert(abs(published - 0.5625) < 1e-12);
+crisp = sdb.davies_bouldin_crisp(X,[1;1;2;2]);
+assert(abs(crisp - 0.25) < 1e-12);
+assert(abs(sdb.soft_davies_bouldin(X+20,centers+20,U) - published) < 1e-12);
+assert(abs(sdb.soft_davies_bouldin(X*3,centers*3,U) - published) < 1e-12);
+assert(abs(sdb.soft_davies_bouldin(X,flipud(centers),fliplr(U)) - published) < 1e-12);
+fprintf('MATLAB analytic SDB parity tests passed.\n');

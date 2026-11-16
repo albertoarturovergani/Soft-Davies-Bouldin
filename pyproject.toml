@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "soft-davies-bouldin"
+version = "0.1.0"
+description = "Soft Davies-Bouldin index for fuzzy cluster validation, MATLAB and Python"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "Alberto Arturo Vergani"}]
+dependencies = ["numpy>=1.23"]
+keywords = ["clustering", "fuzzy c-means", "cluster-validity", "davies-bouldin"]
+
+[project.optional-dependencies]
+benchmarks = ["scipy>=1.9", "scikit-learn>=1.2", "pandas>=1.5", "matplotlib>=3.6"]
+dev = ["pytest>=7", "scipy>=1.9", "scikit-learn>=1.2"]
+
+[tool.setuptools]
+package-dir = {"" = "scripts/python"}
+
+[tool.setuptools.packages.find]
+where = ["scripts/python"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,11 @@
+root = fileparts(fileparts(fileparts(mfilename('fullpath'))));
+addpath(fullfile(root,'scripts','matlab'));
+source = fullfile(root,'data','fixtures','toy_points.csv');
+X = readmatrix(source);
+X = X(:,1:2);
+[centers,U,iteration] = sdb.fuzzy_c_means(X,2,2,42);
+[~,hard] = max(U,[],2);
+fprintf('FCM iterations: %d\n',iteration);
+fprintf('SDB, published Eq. 7: %.6f\n',sdb.soft_davies_bouldin(X,centers,U));
+fprintf('SDB, historical power variant: %.6f\n',sdb.soft_davies_bouldin(X,centers,U,1,2));
+fprintf('Classic DB on hard FCM labels: %.6f\n',sdb.davies_bouldin_crisp(X,hard));

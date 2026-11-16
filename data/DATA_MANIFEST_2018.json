@@ -1,0 +1,95 @@
+[
+  {
+    "filename": "cancer.mat",
+    "n_samples": 699,
+    "n_features": 9,
+    "n_classes": 2,
+    "class_counts": [
+      458,
+      241
+    ],
+    "sha256": "d626e3392c85515bbd04f8a0fccbc36c8382c570e3f7541997ff91cc4f36275c"
+  },
+  {
+    "filename": "crab.mat",
+    "n_samples": 200,
+    "n_features": 6,
+    "n_classes": 2,
+    "class_counts": [
+      100,
+      100
+    ],
+    "sha256": "539753a59f5dd4d4b7366612dbf529020420a4da455a27302ff710da75f3215a"
+  },
+  {
+    "filename": "glass.mat",
+    "n_samples": 214,
+    "n_features": 9,
+    "n_classes": 2,
+    "class_counts": [
+      51,
+      163
+    ],
+    "sha256": "4c1b4cd7f9c15762ef47a8f409822f74283b1b5941bcaf0b987c9671940edcdb"
+  },
+  {
+    "filename": "iris.mat",
+    "n_samples": 150,
+    "n_features": 4,
+    "n_classes": 3,
+    "class_counts": [
+      50,
+      50,
+      50
+    ],
+    "sha256": "6d36aba1fce38ab20a18777484d66039f9cb2e6666f892ce7251b6458aa8d885"
+  },
+  {
+    "filename": "ovarian.mat",
+    "n_samples": 216,
+    "n_features": 100,
+    "n_classes": 2,
+    "class_counts": [
+      121,
+      95
+    ],
+    "sha256": "f2f2734f00f012a545d5f8ede66b8299a00d7452ab5df8a4ad8bd75552c3b5ac"
+  },
+  {
+    "filename": "simpleclusters.mat",
+    "n_samples": 1000,
+    "n_features": 2,
+    "n_classes": 4,
+    "class_counts": [
+      243,
+      247,
+      233,
+      277
+    ],
+    "sha256": "19297e374f296a2717de96943b2aef6823b3ab72963483266690af774a1e72c5"
+  },
+  {
+    "filename": "thyroid.mat",
+    "n_samples": 7200,
+    "n_features": 21,
+    "n_classes": 3,
+    "class_counts": [
+      166,
+      368,
+      6666
+    ],
+    "sha256": "9d359cf336212451dfcd2a8fc3ce873881d02a7811c68b540fdd120b9bf04d5a"
+  },
+  {
+    "filename": "wine.mat",
+    "n_samples": 178,
+    "n_features": 13,
+    "n_classes": 3,
+    "class_counts": [
+      59,
+      71,
+      48
+    ],
+    "sha256": "978cd2995186617c84a7605d08d3cf4e1178296f45bd5a01af88db47aa20ec6b"
+  }
+]

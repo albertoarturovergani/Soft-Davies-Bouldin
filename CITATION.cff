@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use the Soft Davies-Bouldin index, please cite the original paper."
+title: "A Soft Davies-Bouldin Separation Measure"
+authors:
+  - family-names: Vergani
+    given-names: Alberto Arturo
+  - family-names: Binaghi
+    given-names: Elisabetta
+doi: 10.1109/FUZZ-IEEE.2018.8491581
+date-released: 2018-07-08
+type: conference-paper
+preferred-citation:
+  type: conference-paper
+  authors:
+    - family-names: Vergani
+      given-names: Alberto Arturo
+    - family-names: Binaghi
+      given-names: Elisabetta
+  title: "A Soft Davies-Bouldin Separation Measure"
+  conference:
+    name: "2018 IEEE International Conference on Fuzzy Systems (FUZZ-IEEE)"
+  year: 2018
+  doi: 10.1109/FUZZ-IEEE.2018.8491581

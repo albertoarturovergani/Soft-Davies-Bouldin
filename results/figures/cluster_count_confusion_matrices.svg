@@ -1,0 +1,243 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1155" role="img" aria-labelledby="title desc"><title id="title">Optimal cluster-count confusion matrices: three clustering validity indices</title><desc id="desc">Comparisons across eight archived benchmark datasets. DB on hardened fuzzy C-means correctly selects five of eight cluster counts, DB on K-means four of eight, and SDB on fuzzy C-means three of eight. Each matrix has true number of clusters on rows and selected number on columns.</desc><style>text{font-family:Inter,Arial,Helvetica,sans-serif} .k{font-variant-numeric:tabular-nums}</style>
+<rect x="0" y="0" width="1200" height="1155" rx="0" fill="#f8fafc" stroke="none" stroke-width="1"/>
+<text x="48" y="66" font-size="33" fill="#0f172a" font-weight="700" text-anchor="start">Which validity index finds the true number of clusters?</text>
+<text x="48" y="102" font-size="18" fill="#475569" font-weight="400" text-anchor="start">Confusion matrices from eight 2018 ground-truth datasets · Python reimplementation · 3 seeds per K</text>
+<rect x="48" y="124" width="18" height="18" rx="4" fill="#ccecdf" stroke="#7bc8a5" stroke-width="1"/>
+<text x="77" y="139" font-size="15" fill="#334155" font-weight="400" text-anchor="start">Correct K (diagonal)</text>
+<rect x="306" y="124" width="18" height="18" rx="4" fill="#ffdfb5" stroke="#e9b268" stroke-width="1"/>
+<text x="335" y="139" font-size="15" fill="#334155" font-weight="400" text-anchor="start">Incorrect K (off diagonal)</text>
+<rect x="593" y="124" width="18" height="18" rx="4" fill="#eef2f7" stroke="#dce5ee" stroke-width="1"/>
+<text x="622" y="139" font-size="15" fill="#334155" font-weight="400" text-anchor="start">No dataset</text>
+<rect x="48" y="167" width="354" height="100" rx="15" fill="#ffffff" stroke="#dbe4ed" stroke-width="1"/>
+<rect x="48" y="167" width="6" height="100" rx="3" fill="#0f766e" stroke="none" stroke-width="1"/>
+<text x="72" y="198" font-size="17" fill="#475569" font-weight="600" text-anchor="start">DB on hardened FCM</text>
+<text x="72" y="242" font-size="37" fill="#0f172a" font-weight="750" text-anchor="start">5 / 8</text>
+<text x="219" y="239" font-size="17" fill="#475569" font-weight="500" text-anchor="start">62.5% correct</text>
+<rect x="424" y="167" width="354" height="100" rx="15" fill="#ffffff" stroke="#dbe4ed" stroke-width="1"/>
+<rect x="424" y="167" width="6" height="100" rx="3" fill="#3b82f6" stroke="none" stroke-width="1"/>
+<text x="448" y="198" font-size="17" fill="#475569" font-weight="600" text-anchor="start">DB on K-means</text>
+<text x="448" y="242" font-size="37" fill="#0f172a" font-weight="750" text-anchor="start">4 / 8</text>
+<text x="595" y="239" font-size="17" fill="#475569" font-weight="500" text-anchor="start">50% correct</text>
+<rect x="800" y="167" width="354" height="100" rx="15" fill="#ffffff" stroke="#dbe4ed" stroke-width="1"/>
+<rect x="800" y="167" width="6" height="100" rx="3" fill="#8b5cf6" stroke="none" stroke-width="1"/>
+<text x="824" y="198" font-size="17" fill="#475569" font-weight="600" text-anchor="start">SDB on fuzzy C-means</text>
+<text x="824" y="242" font-size="37" fill="#0f172a" font-weight="750" text-anchor="start">3 / 8</text>
+<text x="971" y="239" font-size="17" fill="#475569" font-weight="500" text-anchor="start">37.5% correct</text>
+<rect x="48" y="292" width="1104" height="254" rx="17" fill="#ffffff" stroke="#dbe4ed" stroke-width="1"/>
+<text x="76" y="329" font-size="23" fill="#0f172a" font-weight="700" text-anchor="start">DB on hardened FCM</text>
+<text x="76" y="356" font-size="16" fill="#64748b" font-weight="400" text-anchor="start">True-K recovery: 5/8 · 3 incorrect</text>
+<text x="280" y="329" font-size="14" fill="#475569" font-weight="600" text-anchor="start">SELECTED NUMBER OF CLUSTERS (K)</text>
+<text x="1040" y="354" font-size="14" fill="#64748b" font-weight="400" text-anchor="start">Dataset count</text>
+<text x="317" y="378" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">2</text>
+<text x="399" y="378" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">3</text>
+<text x="481" y="378" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">4</text>
+<text x="563" y="378" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">5</text>
+<text x="645" y="378" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">6</text>
+<text x="727" y="378" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">7</text>
+<text x="809" y="378" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">8</text>
+<text x="891" y="378" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">9</text>
+<text x="973" y="378" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">10</text>
+<text x="83" y="417" font-size="16" fill="#334155" font-weight="600" text-anchor="start">TRUE K = 2</text>
+<rect x="280" y="392" width="74" height="38" rx="6" fill="#ccecdf" stroke="#80c8a6" stroke-width="1"/>
+<text x="317" y="418" font-size="18" fill="#075943" font-weight="700" text-anchor="middle">3</text>
+<rect x="362" y="392" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="399" y="418" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="444" y="392" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="481" y="418" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">1</text>
+<rect x="526" y="392" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="563" y="418" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="608" y="392" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="645" y="418" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="690" y="392" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="727" y="418" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="772" y="392" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="809" y="418" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="854" y="392" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="891" y="418" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="936" y="392" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="973" y="418" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<text x="83" y="462" font-size="16" fill="#334155" font-weight="600" text-anchor="start">TRUE K = 3</text>
+<rect x="280" y="437" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="317" y="463" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">1</text>
+<rect x="362" y="437" width="74" height="38" rx="6" fill="#ccecdf" stroke="#80c8a6" stroke-width="1"/>
+<text x="399" y="463" font-size="18" fill="#075943" font-weight="700" text-anchor="middle">1</text>
+<rect x="444" y="437" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="481" y="463" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="526" y="437" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="563" y="463" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="608" y="437" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="645" y="463" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="690" y="437" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="727" y="463" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">1</text>
+<rect x="772" y="437" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="809" y="463" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="854" y="437" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="891" y="463" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="936" y="437" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="973" y="463" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<text x="83" y="507" font-size="16" fill="#334155" font-weight="600" text-anchor="start">TRUE K = 4</text>
+<rect x="280" y="482" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="317" y="508" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="362" y="482" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="399" y="508" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="444" y="482" width="74" height="38" rx="6" fill="#ccecdf" stroke="#80c8a6" stroke-width="1"/>
+<text x="481" y="508" font-size="18" fill="#075943" font-weight="700" text-anchor="middle">1</text>
+<rect x="526" y="482" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="563" y="508" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="608" y="482" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="645" y="508" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="690" y="482" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="727" y="508" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="772" y="482" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="809" y="508" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="854" y="482" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="891" y="508" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="936" y="482" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="973" y="508" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<text x="76" y="530" font-size="14" fill="#64748b" font-weight="400" text-anchor="start">Rows = real K · Columns = K minimizing the mean score over 3 seeds (candidate K = 2–10)</text>
+<rect x="48" y="567" width="1104" height="254" rx="17" fill="#ffffff" stroke="#dbe4ed" stroke-width="1"/>
+<text x="76" y="604" font-size="23" fill="#0f172a" font-weight="700" text-anchor="start">DB on K-means</text>
+<text x="76" y="631" font-size="16" fill="#64748b" font-weight="400" text-anchor="start">True-K recovery: 4/8 · 4 incorrect</text>
+<text x="280" y="604" font-size="14" fill="#475569" font-weight="600" text-anchor="start">SELECTED NUMBER OF CLUSTERS (K)</text>
+<text x="1040" y="629" font-size="14" fill="#64748b" font-weight="400" text-anchor="start">Dataset count</text>
+<text x="317" y="653" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">2</text>
+<text x="399" y="653" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">3</text>
+<text x="481" y="653" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">4</text>
+<text x="563" y="653" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">5</text>
+<text x="645" y="653" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">6</text>
+<text x="727" y="653" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">7</text>
+<text x="809" y="653" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">8</text>
+<text x="891" y="653" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">9</text>
+<text x="973" y="653" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">10</text>
+<text x="83" y="692" font-size="16" fill="#334155" font-weight="600" text-anchor="start">TRUE K = 2</text>
+<rect x="280" y="667" width="74" height="38" rx="6" fill="#ccecdf" stroke="#80c8a6" stroke-width="1"/>
+<text x="317" y="693" font-size="18" fill="#075943" font-weight="700" text-anchor="middle">3</text>
+<rect x="362" y="667" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="399" y="693" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="444" y="667" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="481" y="693" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">1</text>
+<rect x="526" y="667" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="563" y="693" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="608" y="667" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="645" y="693" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="690" y="667" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="727" y="693" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="772" y="667" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="809" y="693" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="854" y="667" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="891" y="693" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="936" y="667" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="973" y="693" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<text x="83" y="737" font-size="16" fill="#334155" font-weight="600" text-anchor="start">TRUE K = 3</text>
+<rect x="280" y="712" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="317" y="738" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">1</text>
+<rect x="362" y="712" width="74" height="38" rx="6" fill="#edf8f2" stroke="#c8e7d8" stroke-width="1"/>
+<text x="399" y="738" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="444" y="712" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="481" y="738" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="526" y="712" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="563" y="738" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="608" y="712" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="645" y="738" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="690" y="712" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="727" y="738" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">1</text>
+<rect x="772" y="712" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="809" y="738" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="854" y="712" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="891" y="738" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">1</text>
+<rect x="936" y="712" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="973" y="738" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<text x="83" y="782" font-size="16" fill="#334155" font-weight="600" text-anchor="start">TRUE K = 4</text>
+<rect x="280" y="757" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="317" y="783" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="362" y="757" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="399" y="783" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="444" y="757" width="74" height="38" rx="6" fill="#ccecdf" stroke="#80c8a6" stroke-width="1"/>
+<text x="481" y="783" font-size="18" fill="#075943" font-weight="700" text-anchor="middle">1</text>
+<rect x="526" y="757" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="563" y="783" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="608" y="757" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="645" y="783" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="690" y="757" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="727" y="783" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="772" y="757" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="809" y="783" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="854" y="757" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="891" y="783" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="936" y="757" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="973" y="783" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<text x="76" y="805" font-size="14" fill="#64748b" font-weight="400" text-anchor="start">Rows = real K · Columns = K minimizing the mean score over 3 seeds (candidate K = 2–10)</text>
+<rect x="48" y="842" width="1104" height="254" rx="17" fill="#ffffff" stroke="#dbe4ed" stroke-width="1"/>
+<text x="76" y="879" font-size="23" fill="#0f172a" font-weight="700" text-anchor="start">SDB on fuzzy C-means</text>
+<text x="76" y="906" font-size="16" fill="#64748b" font-weight="400" text-anchor="start">True-K recovery: 3/8 · 5 incorrect</text>
+<text x="280" y="879" font-size="14" fill="#475569" font-weight="600" text-anchor="start">SELECTED NUMBER OF CLUSTERS (K)</text>
+<text x="1040" y="904" font-size="14" fill="#64748b" font-weight="400" text-anchor="start">Dataset count</text>
+<text x="317" y="928" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">2</text>
+<text x="399" y="928" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">3</text>
+<text x="481" y="928" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">4</text>
+<text x="563" y="928" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">5</text>
+<text x="645" y="928" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">6</text>
+<text x="727" y="928" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">7</text>
+<text x="809" y="928" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">8</text>
+<text x="891" y="928" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">9</text>
+<text x="973" y="928" font-size="17" fill="#334155" font-weight="600" text-anchor="middle">10</text>
+<text x="83" y="967" font-size="16" fill="#334155" font-weight="600" text-anchor="start">TRUE K = 2</text>
+<rect x="280" y="942" width="74" height="38" rx="6" fill="#ccecdf" stroke="#80c8a6" stroke-width="1"/>
+<text x="317" y="968" font-size="18" fill="#075943" font-weight="700" text-anchor="middle">1</text>
+<rect x="362" y="942" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="399" y="968" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="444" y="942" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="481" y="968" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="526" y="942" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="563" y="968" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="608" y="942" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="645" y="968" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="690" y="942" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="727" y="968" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="772" y="942" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="809" y="968" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">1</text>
+<rect x="854" y="942" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="891" y="968" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="936" y="942" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="973" y="968" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">2</text>
+<text x="83" y="1012" font-size="16" fill="#334155" font-weight="600" text-anchor="start">TRUE K = 3</text>
+<rect x="280" y="987" width="74" height="38" rx="6" fill="#ffdfb5" stroke="#e3b46f" stroke-width="1"/>
+<text x="317" y="1013" font-size="18" fill="#92400e" font-weight="700" text-anchor="middle">2</text>
+<rect x="362" y="987" width="74" height="38" rx="6" fill="#ccecdf" stroke="#80c8a6" stroke-width="1"/>
+<text x="399" y="1013" font-size="18" fill="#075943" font-weight="700" text-anchor="middle">1</text>
+<rect x="444" y="987" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="481" y="1013" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="526" y="987" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="563" y="1013" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="608" y="987" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="645" y="1013" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="690" y="987" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="727" y="1013" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="772" y="987" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="809" y="1013" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="854" y="987" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="891" y="1013" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="936" y="987" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="973" y="1013" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<text x="83" y="1057" font-size="16" fill="#334155" font-weight="600" text-anchor="start">TRUE K = 4</text>
+<rect x="280" y="1032" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="317" y="1058" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="362" y="1032" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="399" y="1058" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="444" y="1032" width="74" height="38" rx="6" fill="#ccecdf" stroke="#80c8a6" stroke-width="1"/>
+<text x="481" y="1058" font-size="18" fill="#075943" font-weight="700" text-anchor="middle">1</text>
+<rect x="526" y="1032" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="563" y="1058" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="608" y="1032" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="645" y="1058" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="690" y="1032" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="727" y="1058" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="772" y="1032" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="809" y="1058" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="854" y="1032" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="891" y="1058" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<rect x="936" y="1032" width="74" height="38" rx="6" fill="#eef2f7" stroke="#dbe4ed" stroke-width="1"/>
+<text x="973" y="1058" font-size="18" fill="#a7b1c1" font-weight="400" text-anchor="middle">0</text>
+<text x="76" y="1080" font-size="14" fill="#64748b" font-weight="400" text-anchor="start">Rows = real K · Columns = K minimizing the mean score over 3 seeds (candidate K = 2–10)</text>
+<text x="48" y="1145" font-size="14" fill="#64748b" font-weight="400" text-anchor="start">Each dataset contributes once per criterion. This is not a sample-label confusion matrix or a test of statistical superiority.</text>
+</svg>

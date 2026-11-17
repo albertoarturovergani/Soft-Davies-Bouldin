@@ -38,27 +38,31 @@ def test_paired_sweep_and_independent_test_sample():
     assert not np.array_equal(x0, xt)
 
 
-def test_three_class_overlap_and_bayes_reference():
+@pytest.mark.parametrize('n_classes',[3,4,5])
+def test_multiclass_overlap_and_bayes_reference(n_classes):
     for step in range(11):
         d = separation_for_step(step)
-        centers = generating_centers(d,3)
-        knots = sorted(set([0,*centers,*(centers-1),*(centers+1),-d/2,d/2]))
+        centers = generating_centers(d,n_classes)
+        midpoints = (centers[:-1]+centers[1:])/2
+        knots = sorted(set([0,*centers,*(centers-1),*(centers+1),*midpoints]))
+        bound = n_classes+1
         for left,right in zip(centers[:-1],centers[1:]):
-            overlap = quad(lambda x: min(density(x,left),density(x,right)), -4,4,points=knots)[0]
+            overlap = quad(lambda x: min(density(x,left),density(x,right)), -bound,bound,points=knots)[0]
             assert overlap == pytest.approx(1-step/10,abs=1e-10)
-        correct = quad(lambda x: np.max(density(x,centers))/3,-4,4,points=knots)[0]
-        assert correct == pytest.approx(bayes_accuracy(1-step/10,3),abs=1e-10)
+        correct = quad(lambda x: np.max(density(x,centers))/n_classes,-bound,bound,points=knots)[0]
+        assert correct == pytest.approx(bayes_accuracy(1-step/10,n_classes),abs=1e-10)
 
 
-def test_three_class_endpoints_and_paired_samples():
-    x0,y0 = make_data(7,0,100,n_classes=3)
-    x2,y2 = make_data(7,2,100,n_classes=3)
-    assert x0.shape == (300,1)
-    np.testing.assert_array_equal(np.bincount(y0),[100,100,100])
+@pytest.mark.parametrize('n_classes',[3,4,5])
+def test_multiclass_endpoints_and_paired_samples(n_classes):
+    x0,y0 = make_data(7,0,100,n_classes=n_classes)
+    x2,y2 = make_data(7,2,100,n_classes=n_classes)
+    assert x0.shape == (100*n_classes,1)
+    np.testing.assert_array_equal(np.bincount(y0),np.full(n_classes,100))
     np.testing.assert_array_equal(y0,y2)
-    np.testing.assert_allclose(x2[:,0]-x0[:,0],2*(y0-1))
-    np.testing.assert_allclose(posterior_probabilities(x0[:,0],0,3),1/3)
-    np.testing.assert_allclose(posterior_probabilities(x2[:,0],2,3),np.eye(3)[y2])
+    np.testing.assert_allclose(x2[:,0]-x0[:,0],2*(y0-(n_classes-1)/2))
+    np.testing.assert_allclose(posterior_probabilities(x0[:,0],0,n_classes),1/n_classes)
+    np.testing.assert_allclose(posterior_probabilities(x2[:,0],2,n_classes),np.eye(n_classes)[y2])
 
 
 def test_binary_seeded_scores_remain_reproducible():
@@ -75,7 +79,7 @@ def test_binary_seeded_scores_remain_reproducible():
     np.testing.assert_allclose(actual[columns],saved[columns],rtol=1e-12,atol=1e-12)
 
 
-@pytest.mark.parametrize('result_name',['supplementary_overlap','supplementary_overlap_3classes'])
+@pytest.mark.parametrize('result_name',['supplementary_overlap',*[f'supplementary_overlap_{n}classes' for n in [3,4,5]]])
 def test_saved_supplementary_grid(result_name):
     import json
     import pandas as pd

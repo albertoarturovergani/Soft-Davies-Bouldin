@@ -1,0 +1,43 @@
+{
+  "configuration": {
+    "n_classes": 4,
+    "replicates": 20,
+    "initializations": 100,
+    "steps": 10,
+    "n_per_class": 100,
+    "test_per_class": 2000,
+    "max_k": 6,
+    "max_iter": 1000,
+    "tol": 1e-07
+  },
+  "workers": 8,
+  "python": "3.12.14",
+  "packages": {
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "threadpoolctl": "3.8.0"
+  },
+  "runtime_seconds": 588.1234561000019,
+  "random_design": "SeedSequence([20261117, replicate, test_flag]); fixed base draws across overlap steps",
+  "index_definition": "Published SDB q=1, p=2, membership_power=1; FCM m=2",
+  "kmeans_n_init": 1,
+  "candidate_k": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "overlap_definition": "Adjacent-pair integral min(f_i, f_(i+1)); equally spaced triangular densities, half-width 1; O(d)=(1-d/2)^2",
+  "population_bayes_accuracy": "1 - ((C-1)/C)*O; normalized Bayes error equals adjacent overlap O",
+  "posterior_error_definition": "Mean squared error averaged over observations and class columns; test_Brier is the per-class mean of multiclass Brier components",
+  "score_sha256": "4d90adc17e2ab2615d82222b9bd5955257812db58ccb516fcc51e974a6190a15",
+  "code_sha256": {
+    "supplementary_overlap.py": "0017d7a317b6b2d8f974e4a8a94271b21639d8e8170dd7180b7d5fe7dfc0280d",
+    "fcm.py": "d473f2c1959bf7283d341047300ae0c6b83965d6f1bf221ecda0fe635e7b6c0a",
+    "index.py": "3b3269e42c34dd9a13c6dc8fe567d170443a7497aa87be151096d90525e9352e"
+  }
+}

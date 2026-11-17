@@ -1,0 +1,40 @@
+{
+  "configuration": {
+    "replicates": 20,
+    "initializations": 100,
+    "steps": 10,
+    "n_per_class": 100,
+    "test_per_class": 2000,
+    "max_k": 6,
+    "max_iter": 1000,
+    "tol": 1e-07
+  },
+  "workers": 4,
+  "python": "3.12.14",
+  "packages": {
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "threadpoolctl": "3.8.0"
+  },
+  "runtime_seconds": 470.0529183000326,
+  "random_design": "SeedSequence([20261117, replicate, test_flag]); fixed base draws across overlap steps",
+  "index_definition": "Published SDB q=1, p=2, membership_power=1; FCM m=2",
+  "kmeans_n_init": 1,
+  "candidate_k": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "overlap_definition": "Integral min(f_left, f_right); triangular densities half-width 1; O(d)=(1-d/2)^2",
+  "score_sha256": "cb469e450e278b65d613c8f7bb1f735c780591571df02dcd1d2dfa8c4f4b156c",
+  "code_sha256": {
+    "supplementary_overlap.py": "ba076ab09da411347a59eb78acc52047fb7b9ac947c3ae929ca78cabfe25cc97",
+    "fcm.py": "d473f2c1959bf7283d341047300ae0c6b83965d6f1bf221ecda0fe635e7b6c0a",
+    "index.py": "3b3269e42c34dd9a13c6dc8fe567d170443a7497aa87be151096d90525e9352e"
+  }
+}

@@ -191,9 +191,17 @@ A [focused Italian graph](results/figures/overlap_success_it.png) shows class-co
 
 See [Technical note 2: three classes](docs/TECHNICAL_NOTES_THREE_CLASSES.md), the [two-versus-three comparison on linear axes](results/figures/overlap_2_vs_3_recovery.png), and [full synthetic results](results/supplementary_overlap_3classes/). Extending all 123 capped three-class FCM fits changes **0/660 K choices**. At disjointness, FCM itself recovers the classes accurately when K=3 is fixed; the five SDB errors come from preferring K=2. This limits the earlier claim of an SDB advantage to particular overlap settings and geometries.
 
+<!-- four-five-overlap:start -->
+**Four- and five-class extension:** both new studies retain 11 adjacent-overlap levels, 20 datasets, 100 starts and candidates K=2–6. There are **220,000 additional configurations**. At disjointness, SDB recovers K=4 in **0/20 datasets** and K=5 in **0/20**, compared with **20/20 and 20/20 for DB/k-means**, and **20/20 and 20/20 for DB/hardened FCM**. The earlier SDB advantage therefore cannot be generalized to these additional class counts.
+
+![Class-count recovery from two to five classes, linear axes](results/figures/overlap_2_to_5_recovery.png)
+
+Read [Technical note 3: four and five classes](docs/TECHNICAL_NOTES_FOUR_FIVE_CLASSES.md) for every overlap level, four dataset examples for each study, fixed-K accuracy, selected-K distributions and convergence sensitivity. Samples per class stay at 100, while total size increases to 400/500; the fixed K=2–6 range also leaves fewer over-counting alternatives as class count increases. Results are descriptive for this geometry. [Four-class results](results/supplementary_overlap_4classes/) · [Five-class results](results/supplementary_overlap_5classes/).
+<!-- four-five-overlap:end -->
+
 ## Testing
 
-`pytest -q` covers analytic toy examples, cluster-order permutation, translation/scale invariance, degenerate inputs, FCM membership constraints, and a scikit-learn reference check. It also checks the public 100-seed aggregate tables and abstract comparison counts, the exact synthetic overlap levels and Bayes references, binary-score regression, and both complete 110,000-configuration supplementary grids. An additional local test validates all 68,400 original-data configurations when the private individual-score files are present. `scripts/matlab/test_sdb.m` checks MATLAB against the same analytic fixture. MATLAB has not been executed in the authoring environment; run it in your local MATLAB installation or CI runner.
+`pytest -q` covers analytic toy examples, cluster-order permutation, translation/scale invariance, degenerate inputs, FCM membership constraints, and a scikit-learn reference check. It also checks the public 100-seed aggregate tables and abstract comparison counts, the exact synthetic overlap levels and Bayes references, binary-score regression, and all four complete 110,000-configuration supplementary grids. An additional local test validates all 68,400 original-data configurations when the private individual-score files are present. `scripts/matlab/test_sdb.m` checks MATLAB against the same analytic fixture. MATLAB has not been executed in the authoring environment; run it in your local MATLAB installation or CI runner.
 
 ## Citation
 

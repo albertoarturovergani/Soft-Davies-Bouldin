@@ -2,6 +2,8 @@
 
 **17 November 2026. New synthetic experiment, not an experiment or result from the 2018 paper.**
 
+**Follow-up:** [Technical note 2 repeats this sweep with three classes](TECHNICAL_NOTES_THREE_CLASSES.md), retaining 100 starts and using linear axes. SDB's advantage does not extend across the full three-class sweep; the two-class results below remain unchanged. A [direct comparison on matching linear axes](../results/figures/overlap_2_vs_3_recovery.png) is available.
+
 This experiment asks when DB on k-means, DB on hardened fuzzy c-means, and the published SDB on fuzzy c-means recognize two increasingly separated classes. It measures class recovery and cluster-count selection separately. The three index values are not treated as comparable accuracy scores.
 
 ## Dataset: eleven exact overlap levels

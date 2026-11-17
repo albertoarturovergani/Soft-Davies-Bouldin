@@ -68,7 +68,7 @@ All methods select K above 2 at steps 0–7. At step 0, K=2 is not an identifiab
 
 ## Focused view: success from 0 to 1
 
-The following Italian-language view uses the requested display coordinate **x = 2(1 − O)**: 0 is complete overlap and 2 is complete separation. This is a rescaled separation coordinate, not the FCM exponent or the fitted number of clusters. Fuzziness decreases to the right. The vertical axis is the fraction of datasets selecting the correct generating class count, not the fraction of correctly classified observations. Step 0 is omitted because its correct observable count is one and K=1 is undefined for these criteria.
+The following Italian-language view uses the requested display coordinate **x = 2(1 − O)**: 0 is complete overlap and 2 is complete separation. This is a rescaled separation coordinate, not the FCM exponent or the fitted number of clusters. Fuzziness decreases to the right. The vertical axis is the fraction of datasets selecting the correct generating class count, not the fraction of correctly classified observations. Both main axes are logarithmic. Zero success frequencies are shown in a separate strip outside the logarithmic Y scale; they are not replaced by a positive value. The x=0 endpoint is excluded from the main logarithmic plot, and its correct observable count is one, for which these criteria are undefined. Four examples below show 100%, 50%, 20% and 0% overlap, with class densities and actual training observations from replicate 0 on identical linear axes.
 
 ![Class-count recovery on the requested axes](../results/figures/overlap_success_it.png)
 

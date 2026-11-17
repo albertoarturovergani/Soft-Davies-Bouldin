@@ -1,5 +1,7 @@
 # Independent check of the 2018 abstract: AIM, RIM and MRC
 
+> **Historical 10-seed fMRI report.** The current [100-initialization reanalysis](FMRI_100_INITIALIZATIONS.md) uses 61,200 fMRI configurations and confirms the same AIM 7/12, RIM 4/8 and MRC 9/9 counts. The tables and figures below document the earlier experiment and are retained for comparison.
+
 **Study:** Vergani & Binaghi (2018), *A Soft Davies-Bouldin Separation Measure* — DOI [10.1109/FUZZ-IEEE.2018.8491581](https://doi.org/10.1109/FUZZ-IEEE.2018.8491581).
 
 **Status:** Independent Python re-computation from the original feature matrices, not a transcription of the published figure. The three headline comparison counts in the abstract are recovered. The exact historical numerical analysis and its ANOVA p-values are **not** bitwise reproduced.

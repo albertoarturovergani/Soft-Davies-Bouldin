@@ -1,6 +1,6 @@
 # Independent Python reimplementation: benchmark report
 
-> **Updated 2026-11-16:** This page documents the earlier **3-seed pilot**. See [the extended abstract-level reproduction](ABSTRACT_REPRODUCTION.md) for the complete eight-benchmark 100-seed study plus 10-seed fMRI experiment, summary CSVs, and a Figure-1-style AIM/RIM/MRC plot.
+> **Updated 2026-11-17:** This page documents the earlier **3-seed pilot**. See [the 100-initialization reanalysis](FMRI_100_INITIALIZATIONS.md) for the eight-benchmark 100-seed study plus 100-seed fMRI experiment, summary CSVs, and updated AIM/RIM/MRC figures. The [earlier 10-seed fMRI report](ABSTRACT_REPRODUCTION.md) is also retained.
 
 **Protocol:** archived eight original Data/T MATLAB datasets; original unstandardized features; FCM exponent m=2; q=1; Euclidean geometry; candidate K=2–10; 3 seeded FCM and K-means replicates per K; mean scores over seeds; FCM max 100 iterations. K-means uses scikit-learn with `n_init=10`. All scores are recomputed with new NumPy implementation code.
 

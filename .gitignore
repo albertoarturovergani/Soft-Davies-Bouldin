@@ -13,3 +13,6 @@ data/original/*
 !data/original/.gitkeep
 data/benchmarks/
 results/recomputed/
+
+# Local individual scores: publication limited to aggregates and figures.
+results/reproduction_100seeds/*_scores.csv.gz

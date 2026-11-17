@@ -125,9 +125,37 @@ The default uses `q=1`, Minkowski exponent `p=2`, and **raw mean memberships** (
 
 ## Reproduction status
 
-Using the actual eight 2018 archive datasets (all with `Data` and one-hot `T`), our independent Python implementation reproduced the eight SDB values in paper Table IV to **four decimal places** when evaluated at the known class count. Re-running `K=2,…,10`, three seeds per `K`, also recovered **all eight SDB-optimal K values in paper Table III**. See [`docs/BENCHMARKS.md`](docs/BENCHMARKS.md) and `results/` for numeric evidence, configuration, and limitations. This is a successful implementation check, not a full reproduction of all original 100-run statistics, plots, or fMRI analyses.
+**Updated 17 November 2026: the three headline results of the 2018 abstract remain confirmed after increasing fMRI to 100 initializations per subject and K.**
+
+The independent Python reanalysis uses the eight original labeled benchmarks and both ROI/TOI orientations of the original fMRI matrices: **19 REST subjects and 15 TASK subjects**, with **100 seeds for every K=2–10**. This gives **7,200 benchmark configurations + 61,200 fMRI configurations = 68,400 configurations**, each comparing DB on K-means, DB on hardened FCM, and SDB on fuzzy FCM. All configurations completed without recorded errors and produced finite index values.
+
+| Abstract comparison | Paper (2018) | fMRI at 10 initializations | fMRI at 100 initializations |
+|:--|--:|--:|--:|
+| **AIM:** minimum SDB below both DB minima, across 12 configurations | 7/12 | 7/12 | **7/12** |
+| **RIM:** SDB below both DB indices at the known K, across 8 labeled datasets | 4/8 | 4/8 | **4/8** |
+| **MRC:** median SDB across 12 configurations below both DB medians for K=2–10 | 9/9 | 9/9 | **9/9** |
+
+The eight labeled benchmarks remain at 100 seeds in both comparisons. Their **eight Table IV SDB values agree to four decimal places**, and their **eight SDB-optimal K values match Table III**. The four fMRI SDB-optimal K values also remain unchanged: REST-ROI **4**, REST-TOI **2**, TASK-ROI **2**, TASK-TOI **2**. The MRC summary medians are unchanged at the precision of the saved tables. All 6,120 fMRI configurations shared with the earlier local 10-seed run reproduce exactly.
+
+See the [100-initialization report](docs/FMRI_100_INITIALIZATIONS.md), [numerical results and provenance](results/reproduction_100seeds/), and [direct 10-versus-100 comparison](results/reproduction_100seeds/comparison_10_initializations.csv). The earlier [10-seed fMRI report](docs/ABSTRACT_REPRODUCTION.md) and [3-seed benchmark pilot](docs/BENCHMARKS.md) remain available.
+
+**Interpretation:** the initialization count now matches the 100-start design, while Python/MATLAB initialization and implementation differences remain. This confirms the abstract's numerical comparison counts, rather than establishing greater clustering accuracy or reproducing every historical value. Near-coincident centroids still produce extreme SDB values, and reaching the FCM iteration limit is not evidence of convergence; these cases are retained and documented in the report.
 
 ## Selected reproducibility figures
+
+### Updated Figure 1: 100 initializations for benchmarks and fMRI
+
+![Independent AIM, RIM and MRC reanalysis with 100 initializations](results/figures/figure1_100seeds.png)
+
+Upper panels show AIM minima, RIM values at known K, and MRC medians. Lower panels summarize those displayed values. K=1 is undefined and excluded. [PDF](results/figures/figure1_100seeds.pdf) · [SVG](results/figures/figure1_100seeds.svg)
+
+### fMRI sensitivity to increasing initializations from 10 to 100
+
+![fMRI mean SDB at 10 versus 100 initializations](results/figures/fmri_10_vs_100.png)
+
+Scores are averaged over seeds within each subject, then over subjects. Vertical axes are logarithmic with separate limits in each panel. Some high-K TOI means change substantially because of near-coincident centroids, although the four SDB-optimal K values and all three abstract comparison counts remain unchanged. [PDF](results/figures/fmri_10_vs_100.pdf) · [SVG](results/figures/fmri_10_vs_100.svg)
+
+### Earlier benchmark implementation checks
 
 ![Published versus reproduced SDB](results/figures/paper_reproduction.png)
 
@@ -147,9 +175,19 @@ Each matrix compares **true cluster count (rows)** with the **optimal cluster co
 
 For the underlying per-dataset selections, see [BENCHMARKS.md](docs/BENCHMARKS.md) and [the raw benchmark CSV](results/benchmark_original_raw_3seeds_k2-10.csv). **Recovering the correct K does not imply correct assignment of individual samples**, and a lower SDB score than a crisp DB score does not establish superiority because the indices have different definitions and scales.
 
+## Technical notes — supplementary analysis
+
+**New experiment, outside the 2018 paper:** a one-variable dataset with two triangular classes follows **11 exact overlap levels: 100%, 90%, …, 0%**. Twenty independent datasets and 100 starts for every K=2–6 give **110,000 configurations**. The FCM fuzzifier stays fixed at m=2.
+
+At 10% remaining overlap, **SDB selects K=2 in 19/20 datasets**, versus **16/20 for DB/k-means** and **15/20 for DB/hardened FCM**. At zero overlap, all three select K=2 in 20/20 datasets. Hard-label accuracy at fixed K=2 is almost identical between algorithms; these results do not establish universal superiority. At complete overlap, K=1 would describe the single distribution, but none of these indices is defined for K=1.
+
+![Supplementary analysis of eleven overlap levels](results/figures/overlap_results.png)
+
+A [focused Italian graph](results/figures/overlap_success_it.png) shows class-count recovery on a 0–1 scale. Read [Technical note 1: overlap continuum](docs/TECHNICAL_NOTES_OVERLAP.md) for the dataset construction, all eleven steps, membership diagnostics, convergence sensitivity, and full synthetic results. Extending the 144 capped FCM runs to 10,000 iterations changes none of the 660 K selections.
+
 ## Testing
 
-`pytest -q` covers analytic toy examples, cluster-order permutation, translation/scale invariance, degenerate inputs, FCM membership constraints, and a scikit-learn reference check. `scripts/matlab/test_sdb.m` checks MATLAB against the same analytic fixture. MATLAB has not been executed in the authoring environment; run it in your local MATLAB installation or CI runner.
+`pytest -q` covers analytic toy examples, cluster-order permutation, translation/scale invariance, degenerate inputs, FCM membership constraints, and a scikit-learn reference check. It also checks the public 100-seed aggregate tables and abstract comparison counts, the exact synthetic overlap levels, and the complete 110,000-configuration supplementary grid. An additional local test validates all 68,400 original-data configurations when the private individual-score files are present. `scripts/matlab/test_sdb.m` checks MATLAB against the same analytic fixture. MATLAB has not been executed in the authoring environment; run it in your local MATLAB installation or CI runner.
 
 ## Citation
 

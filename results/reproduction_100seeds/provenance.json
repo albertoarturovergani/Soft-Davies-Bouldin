@@ -1,0 +1,107 @@
+{
+  "created_at_local": "2026-11-17T20:20:50.258439+01:00",
+  "source_commit": "a73237e77f4a0801446631e9f71cad46d96fb63b",
+  "python": "3.12.14",
+  "platform": "Windows-11-10.0.26100-SP0",
+  "packages": {
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "pytest": "9.2.0",
+    "threadpoolctl": "3.8.0"
+  },
+  "ground_runs_per_k": 100,
+  "fmri_runs_per_k": 100,
+  "ground_rows": 7200,
+  "fmri_rows": 61200,
+  "total_rows": 68400,
+  "invalid_rows": 0,
+  "aim_below_both": 7,
+  "rim_below_both": 4,
+  "mrc_below_both": 9,
+  "table_IV_matches_four_decimals": 8,
+  "table_IV_max_absolute_error": 2.2740000000021077e-05,
+  "table_III_sdb_k_matches": 8,
+  "ground_truth_k_recovery": {
+    "DB_kmeans": 4,
+    "DB_cmeans_hard": 5,
+    "SDB_cmeans": 3
+  },
+  "fcm_at_iteration_limit": 34949,
+  "fmri_sdb_above_1000": 2201,
+  "initializations_comparison": {
+    "baseline_fmri_runs": 10,
+    "current_fmri_runs": 100,
+    "baseline_counts": {
+      "AIM": 7,
+      "RIM": 4,
+      "MRC": 9
+    },
+    "common_seeds_verification": {
+      "rows": 6120,
+      "allclose_rtol_1e_12_atol_1e_12": true,
+      "maximum_absolute_difference": 0.0
+    },
+    "ground_raw_identical": true,
+    "all_source_data_identical": true
+  },
+  "source_data": [
+    {
+      "filename": "cancer.mat",
+      "bytes": 57587,
+      "sha256": "d626e3392c85515bbd04f8a0fccbc36c8382c570e3f7541997ff91cc4f36275c"
+    },
+    {
+      "filename": "crab.mat",
+      "bytes": 44243,
+      "sha256": "539753a59f5dd4d4b7366612dbf529020420a4da455a27302ff710da75f3215a"
+    },
+    {
+      "filename": "dataset_rest_rio.mat",
+      "bytes": 2363378,
+      "sha256": "881f62a16eb7bc2063a0059118ff7152c50e2b44bb24915c3981f3c1d012031f"
+    },
+    {
+      "filename": "dataset_task_208_rio.mat",
+      "bytes": 2211667,
+      "sha256": "e32ac91810f17f59cc5b04e17bf79517eac87f2edb7ca47aa27f91e8ac7b0a17"
+    },
+    {
+      "filename": "glass.mat",
+      "bytes": 50217,
+      "sha256": "4c1b4cd7f9c15762ef47a8f409822f74283b1b5941bcaf0b987c9671940edcdb"
+    },
+    {
+      "filename": "iris.mat",
+      "bytes": 44988,
+      "sha256": "6d36aba1fce38ab20a18777484d66039f9cb2e6666f892ce7251b6458aa8d885"
+    },
+    {
+      "filename": "ovarian.mat",
+      "bytes": 209317,
+      "sha256": "f2f2734f00f012a545d5f8ede66b8299a00d7452ab5df8a4ad8bd75552c3b5ac"
+    },
+    {
+      "filename": "simpleclusters.mat",
+      "bytes": 66245,
+      "sha256": "19297e374f296a2717de96943b2aef6823b3ab72963483266690af774a1e72c5"
+    },
+    {
+      "filename": "thyroid.mat",
+      "bytes": 151473,
+      "sha256": "9d359cf336212451dfcd2a8fc3ce873881d02a7811c68b540fdd120b9bf04d5a"
+    },
+    {
+      "filename": "wine.mat",
+      "bytes": 46360,
+      "sha256": "978cd2995186617c84a7605d08d3cf4e1178296f45bd5a01af88db47aa20ec6b"
+    }
+  ],
+  "publication_note": "Only aggregate results, dataset-level diagnostics and figures are published for this extension. Per-subject/per-initialization scores, original identifiers and time series remain local, at the data owner's request.",
+  "local_score_files": {
+    "fmri_100seeds_k2-10_scores.csv.gz": "38f995c4b8562d5a86bbbc438988742d7f4e06a0e348ba7cde783e0802b3a0b3",
+    "ground_100seeds_k2-10_scores.csv.gz": "7a8e276f0b52612e7a82967aa725f83b43a5eef1f1f08965be101f0e07efcc7b"
+  }
+}

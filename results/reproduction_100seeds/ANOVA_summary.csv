@@ -1,0 +1,4 @@
+analysis,test,n_groups,F_method,p_method,F_group,p_group
+AIM,dataset,12,1.9775578,0.162254536,21.4464178,2.99707753e-09
+RIM,dataset,8,1.52259802,0.252163513,7.78842375,0.000615618641
+MRC including historical K=1 placeholder,k,10,22.3666989,1.31814519e-05,35.8629754,1.09414689e-09

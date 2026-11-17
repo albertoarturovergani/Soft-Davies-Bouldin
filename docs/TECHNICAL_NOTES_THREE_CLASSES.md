@@ -2,6 +2,8 @@
 
 **17 November 2026. Supplementary synthetic analysis, outside the 2018 paper. All figures in this note use linear axes.**
 
+**Follow-up:** [Technical note 3 extends the same 100-start sweep to four and five classes](TECHNICAL_NOTES_FOUR_FIVE_CLASSES.md), with a direct comparison of all four studies on linear axes. The three-class results below are preserved.
+
 **The two-class advantage does not extend across the full three-class sweep.** At 20% adjacent overlap, SDB selects the generating count K=3 in **13/20 datasets**, versus **5/20 for each DB criterion**. At 10% overlap, the ordering reverses: **11/20 for SDB**, **18/20 for DB/k-means**, and **17/20 for DB/hardened FCM**. With disjoint classes, SDB selects K=3 in **15/20**, while both DB criteria select it in **20/20**. SDB chooses K=2 in its five endpoint errors. Extending capped FCM fits changes none of these selections.
 
 ![Three-class recovery with linear axes and four dataset examples](../results/figures/overlap_3classes_recovery_it.png)

@@ -1,0 +1,8 @@
+{
+  "configurations": 110000,
+  "index_values": 330000,
+  "fcm_at_limit": 123,
+  "kmeans_at_limit": 0,
+  "max_fcm_fixed_point_residual": 0.001963626020308973,
+  "finite_index_values": true
+}

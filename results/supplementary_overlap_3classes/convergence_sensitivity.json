@@ -1,0 +1,9 @@
+{
+  "rerun_configurations": 123,
+  "extended_max_iter": 10000,
+  "still_at_limit": 0,
+  "maximum_fixed_point_residual": 9.966196334865174e-08,
+  "changed_k_choices": 0,
+  "total_k_choices": 660,
+  "note": "Original 1000-iteration results are retained; only capped FCM scores are replaced in this sensitivity check."
+}

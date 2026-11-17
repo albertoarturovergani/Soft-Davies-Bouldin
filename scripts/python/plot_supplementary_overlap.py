@@ -13,6 +13,12 @@ COLORS = ['#2563a6', '#b87417', '#ae2855']
 LABELS = ['DB / k-means', 'DB / hardened FCM', 'SDB / FCM']
 
 
+def class_appearance(n_classes):
+    colors = [COLORS[0],COLORS[2]] if n_classes==2 else COLORS+['#198568','#7854aa']
+    styles = ['-','--',':','-.',(0,(5,1,1,1,1,1))]
+    return colors[:n_classes], styles[:n_classes]
+
+
 def save(fig, path):
     path.parent.mkdir(parents=True, exist_ok=True)
     for suffix in ['png', 'pdf', 'svg']:
@@ -25,8 +31,7 @@ def draw(directory, output):
     steps = config['steps']
     n_classes = config.get('n_classes',2)
     prefix = 'overlap' if n_classes==2 else f'overlap_{n_classes}classes'
-    class_colors = [COLORS[0],COLORS[2]] if n_classes==2 else COLORS
-    class_styles = ['-','--'] if n_classes==2 else ['-','--',':']
+    class_colors, class_styles = class_appearance(n_classes)
     fixed = f'k{n_classes}'
     limit = n_classes+.1
     examples = []

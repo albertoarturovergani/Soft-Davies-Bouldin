@@ -198,7 +198,7 @@ def summarize(directory):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output-dir', type=Path)
-    parser.add_argument('--classes', dest='n_classes', type=int, choices=[2,3], default=2)
+    parser.add_argument('--classes', dest='n_classes', type=int, choices=[2,3,4,5], default=2)
     parser.add_argument('--replicates', type=int, default=20)
     parser.add_argument('--initializations', type=int, default=100)
     parser.add_argument('--steps', type=int, default=10)
@@ -211,7 +211,7 @@ def main():
     parser.add_argument('--summarize-only', action='store_true')
     args = parser.parse_args()
     if args.output_dir is None:
-        args.output_dir = Path('results/supplementary_overlap' + ('_3classes' if args.n_classes == 3 else ''))
+        args.output_dir = Path('results/supplementary_overlap' + (f'_{args.n_classes}classes' if args.n_classes > 2 else ''))
     if args.summarize_only:
         summarize(args.output_dir)
         return

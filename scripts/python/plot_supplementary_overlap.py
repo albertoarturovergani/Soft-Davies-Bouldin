@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from supplementary_overlap import INDEXES, density, make_data, separation_for_step, true_posterior
+from supplementary_overlap import INDEXES, density, generating_centers, make_data, posterior_probabilities, separation_for_step
 
 COLORS = ['#2563a6', '#b87417', '#ae2855']
 LABELS = ['DB / k-means', 'DB / hardened FCM', 'SDB / FCM']
@@ -23,15 +23,23 @@ def save(fig, path):
 def draw(directory, output):
     config = json.loads((directory/'provenance.json').read_text())['configuration']
     steps = config['steps']
+    n_classes = config.get('n_classes',2)
+    prefix = 'overlap' if n_classes==2 else f'overlap_{n_classes}classes'
+    class_colors = [COLORS[0],COLORS[2]] if n_classes==2 else COLORS
+    class_styles = ['-','--'] if n_classes==2 else ['-','--',':']
+    fixed = f'k{n_classes}'
+    limit = n_classes+.1
     examples = []
     for step in range(steps+1):
         d = separation_for_step(step, steps)
-        observations, labels = make_data(0, d, config['n_per_class'])
-        examples.append(pd.DataFrame({'step':step, 'overlap_pct':100*(1-step/steps),
-                                      'x':observations[:,0], 'class':labels,
-                                      'posterior_class_1':true_posterior(observations[:,0],d)}))
+        observations, labels = make_data(0, d, config['n_per_class'], n_classes=n_classes)
+        posterior = posterior_probabilities(observations[:,0],d,n_classes)
+        record={'step':step,'overlap_pct':100*(1-step/steps),'x':observations[:,0],'class':labels}
+        for j in ([1] if n_classes==2 else range(n_classes)):
+            record[f'posterior_class_{j}']=posterior[:,j]
+        examples.append(pd.DataFrame(record))
     pd.concat(examples).to_csv(directory/'example_datasets.csv',index=False,float_format='%.12g')
-    x = np.linspace(-2.1, 2.1, 2001)
+    x = np.linspace(-limit, limit, 2001)
     rows = int(np.ceil((steps+2)/4))
     fig, axes = plt.subplots(rows, 4, figsize=(15, 2.86*rows), layout='constrained', sharex=True, sharey=True, squeeze=False)
     for step, ax in enumerate(axes.flat):
@@ -41,28 +49,29 @@ def draw(directory, output):
                 ax.text(.03, .88, f'One observed variable\nEqual class priors\nTriangular class densities\n\nShaded area = overlap\nStep 0: indistinguishable classes\nStep {steps}: exclusive almost surely', transform=ax.transAxes, va='top', fontsize=11, linespacing=1.5)
             continue
         d = separation_for_step(step, steps)
-        a, b = density(x, -d/2), density(x, d/2)
-        ax.fill_between(x, np.minimum(a,b), color='#aa91b8', alpha=.55, label='Common area')
-        ax.plot(x, a, color=COLORS[0], lw=1.8, label='Class 0')
-        ax.plot(x, b, color=COLORS[2], lw=1.8, linestyle='--', label='Class 1')
-        ax.set(title=f'Step {step} · overlap {100*(1-step/steps):.0f}%', xlim=(-2.1,2.1), ylim=(0,1.08))
+        curves=[density(x,center) for center in generating_centers(d,n_classes)]
+        for j in range(n_classes-1):
+            ax.fill_between(x,np.minimum(curves[j],curves[j+1]),color='#aa91b8',alpha=.3,label='Adjacent overlap' if j==0 else None)
+        for j,(curve,color,style) in enumerate(zip(curves,class_colors,class_styles)):
+            ax.plot(x,curve,color=color,lw=1.8,label=f'Class {j}',linestyle=style)
+        ax.set(title=f'Step {step} · adjacent overlap {100*(1-step/steps):.0f}%', xlim=(-limit,limit), ylim=(0,1.08))
         ax.grid(alpha=.15)
         if step % 4 == 0: ax.set_ylabel('Class density')
         if step >= (rows-1)*4: ax.set_xlabel('Observed variable x')
         if step == 0: ax.legend(fontsize=8, loc='lower left')
-    fig.suptitle(f'Supplementary analysis · {steps+1} exact overlap levels', fontsize=18, fontweight='bold')
-    save(fig, output/'overlap_distributions')
+    fig.suptitle(f'Supplementary analysis · {n_classes} classes · {steps+1} exact overlap levels', fontsize=18, fontweight='bold')
+    save(fig, output/f'{prefix}_distributions')
 
     summary = pd.read_csv(directory/'sweep_summary.csv')
-    perf = pd.read_csv(directory/'k2_performance.csv')
+    perf = pd.read_csv(directory/f'{fixed}_performance.csv')
     fig, axes = plt.subplots(2,3,figsize=(15,8.7),layout='constrained')
     for idx, (metric, label, color) in enumerate(zip(INDEXES, LABELS, COLORS)):
         a = summary[summary.metric == metric].sort_values('step')
         ax = axes[0,idx]
-        ax.plot(a.step, a.score_k2_mean, 'o-', color=color, ms=4)
-        ax.fill_between(a.step, a.score_k2_p10, a.score_k2_p90, color=color, alpha=.16)
-        ax.set(title=f'{label} · fixed K=2', ylabel='Index value (own scale)')
-        axes[1,1].plot(a.step, a.selected_k2_rate, 'o-', color=color, label=label, ms=4)
+        ax.plot(a.step, a[f'score_{fixed}_mean'], 'o-', color=color, ms=4)
+        ax.fill_between(a.step, a[f'score_{fixed}_p10'], a[f'score_{fixed}_p90'], color=color, alpha=.16)
+        ax.set(title=f'{label} · fixed K={n_classes}', ylabel='Index value (own scale)')
+        axes[1,1].plot(a.step, a[f'selected_{fixed}_rate'], 'o-', color=color, label=label, ms=4)
     for method, color, linestyle in [('KMeans',COLORS[0],'-'),('FCM',COLORS[2],'--')]:
         a = perf[perf.method == method].sort_values('step')
         for ax, column in [(axes[1,0],'test_accuracy'),(axes[1,2],'posterior_MSE')]:
@@ -70,16 +79,16 @@ def draw(directory, output):
             ax.fill_between(a.step,a[column+'_p10'],a[column+'_p90'],color=color,alpha=.13)
     a = perf[perf.method == 'FCM'].sort_values('step')
     axes[1,0].plot(a.step,a.bayes_accuracy,'k:',lw=1.8,label='Bayes reference')
-    axes[1,0].set(title='Class recovery · held-out data, K=2',ylabel='Accuracy',ylim=(.45,1.03))
-    axes[1,1].set(title='K selection · minimize mean index',ylabel='Fraction selecting K=2',ylim=(-.03,1.05))
-    axes[1,2].set(title='Membership vs known posterior · K=2',ylabel='Mean squared error (lower is better)',ylim=(-.01,.27))
+    axes[1,0].set(title=f'Class recovery · held-out data, K={n_classes}',ylabel='Accuracy',ylim=(1/n_classes-.05,1.03))
+    axes[1,1].set(title='K selection · minimize mean index',ylabel=f'Fraction selecting K={n_classes}',ylim=(-.03,1.05))
+    axes[1,2].set(title=f'Membership vs known posterior · K={n_classes}',ylabel='Mean squared error per class',ylim=(-.01,.27))
     for ax in axes.flat:
         ax.set_xlabel('Separation step (0–10)')
         ax.set_xticks(range(steps+1))
         ax.grid(alpha=.2)
     for ax in axes[1]: ax.legend(fontsize=8,loc='best')
     fig.suptitle(f'Supplementary overlap sweep · {config["replicates"]} datasets × {config["initializations"]} initializations per K\n100%, 90%, …, 0% overlap · bands: 10th–90th percentiles across datasets',fontsize=16,fontweight='bold')
-    save(fig, output/'overlap_results')
+    save(fig, output/f'{prefix}_results')
 
     selected = pd.read_csv(directory/'selected_k.csv')
     fig, axes = plt.subplots(1,3,figsize=(14,5.4),layout='constrained',sharey=True)
@@ -93,8 +102,8 @@ def draw(directory, output):
         ax.set(title=label,xlabel='Selected K',xticks=range(config['max_k']-1),xticklabels=range(2,config['max_k']+1),yticks=range(steps+1),yticklabels=[f'{s} ({100*(1-s/steps):.0f}%)' for s in range(steps+1)])
     axes[0].set_ylabel('Step (remaining overlap)')
     fig.colorbar(im,ax=axes,shrink=.8,label='Fraction of independent datasets')
-    fig.suptitle('Cluster-count selection across the overlap continuum\nK=1 is undefined for all three indices; step 0 has no identifiable two-class structure',fontsize=15,fontweight='bold')
-    save(fig,output/'overlap_selected_k')
+    fig.suptitle(f'Cluster-count selection · {n_classes} generating classes\nK=1 is undefined for all three indices; step 0 has a single observable distribution',fontsize=15,fontweight='bold')
+    save(fig,output/f'{prefix}_selected_k')
 
 
 if __name__ == '__main__':

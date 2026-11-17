@@ -17,7 +17,7 @@ def main(directory):
     reruns = []
     with threadpool_limits(limits=1):
         for index, row in raw[raw.fcm_at_limit].iterrows():
-            x, _ = make_data(int(row.replicate), row.separation, config['n_per_class'])
+            x, _ = make_data(int(row.replicate), row.separation, config['n_per_class'], n_classes=config.get('n_classes',2))
             centers, u, it = fuzzy_c_means(x,int(row.k),m=2,seed=int(row.seed),max_iter=10000,tol=config['tol'])
             scores = {'SDB_fcm':soft_davies_bouldin(x,centers,u),
                       'DB_fcm_hard':davies_bouldin_crisp(x,u.argmax(axis=1))}

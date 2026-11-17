@@ -37,19 +37,32 @@ def density(x, center):
     return np.maximum(1 - np.abs(np.asarray(x) - center), 0)
 
 
+def generating_centers(separation, n_classes=2):
+    return (np.arange(n_classes) - (n_classes - 1)/2) * separation
+
+
+def posterior_probabilities(x, separation, n_classes=2):
+    values = density(np.asarray(x)[:, None], generating_centers(separation, n_classes)[None, :])
+    total = values.sum(axis=1, keepdims=True)
+    return np.divide(values, total, out=np.full_like(values, 1/n_classes), where=total > 0)
+
+
+def bayes_accuracy(overlap, n_classes=2):
+    """Equal-prior, equally spaced triangular classes with adjacent overlap O."""
+    return 1 - (n_classes-1)/n_classes * np.asarray(overlap)
+
+
 def true_posterior(x, separation):
-    left = density(x, -separation / 2)
-    right = density(x, separation / 2)
-    total = left + right
-    return np.divide(right, total, out=np.full_like(total, .5), where=total > 0)
+    """Backwards-compatible binary posterior used in technical note 1."""
+    return posterior_probabilities(x, separation, 2)[:, 1]
 
 
-def make_data(replicate, separation, n_per_class=100, *, test=False):
+def make_data(replicate, separation, n_per_class=100, *, test=False, n_classes=2):
     """Independent replicates; paired base samples across the entire sweep."""
     rng = np.random.default_rng(np.random.SeedSequence([20261117, replicate, int(test)]))
-    labels = np.repeat([0, 1], n_per_class)
+    labels = np.repeat(np.arange(n_classes), n_per_class)
     base = rng.triangular(-1., 0., 1., size=labels.size)
-    x = base + (labels - .5) * separation
+    x = base + generating_centers(separation, n_classes)[labels]
     order = rng.permutation(labels.size)
     return x[order, None], labels[order]
 
@@ -67,32 +80,33 @@ def predict_membership(x, centers):
     return result
 
 
-def evaluate_best(x, truth, centers, method, separation):
+def evaluate_best(x, truth, centers, method, separation, n_classes=2):
     order = np.argsort(centers[:, 0])
     centers = centers[order]
     membership = predict_membership(x, centers)
     labels = membership.argmax(axis=1)
     result = {'test_ARI': adjusted_rand_score(truth, labels)}
-    if len(centers) == 2:
+    if len(centers) == n_classes:
         # Orientation is fixed geometrically, without fitting to the test labels.
-        probability = membership[:, 1] if method == 'FCM' else labels.astype(float)
-        posterior = true_posterior(x[:, 0], separation)
+        probability = membership if method == 'FCM' else np.eye(n_classes)[labels]
+        posterior = posterior_probabilities(x[:, 0], separation, n_classes)
         result.update(
             test_accuracy=float(np.mean(labels == truth)),
             posterior_MSE=float(np.mean((probability - posterior) ** 2)),
-            test_Brier=float(np.mean((probability - truth) ** 2)),
-            fuzzy_ambiguity=float(np.mean(4 * probability * (1 - probability))),
+            test_Brier=float(np.mean((probability - np.eye(n_classes)[truth]) ** 2)),
+            fuzzy_ambiguity=float(np.mean(n_classes/(n_classes-1) * (1-np.sum(probability**2,axis=1)))),
         )
     return result
 
 
 def run_replicate(config, replicate):
     raw, best = [], []
+    n_classes = config.get('n_classes', 2)
     with threadpool_limits(limits=1):
         for step in range(config['steps'] + 1):
             distance = separation_for_step(step, config['steps'])
-            x, _ = make_data(replicate, distance, config['n_per_class'])
-            xtest, ytest = make_data(replicate, distance, config['test_per_class'], test=True)
+            x, _ = make_data(replicate, distance, config['n_per_class'], n_classes=n_classes)
+            xtest, ytest = make_data(replicate, distance, config['test_per_class'], test=True, n_classes=n_classes)
             for k in range(2, config['max_k'] + 1):
                 winners = {}
                 for seed in range(config['initializations']):
@@ -119,7 +133,7 @@ def run_replicate(config, replicate):
                 for method, (obj, centers, seed, row) in winners.items():
                     best.append(dict(replicate=replicate, step=step, k=k, method=method, seed=seed,
                                      objective=obj, **{key: row[key] for key in INDEXES},
-                                     **evaluate_best(xtest, ytest, centers, method, distance)))
+                                     **evaluate_best(xtest, ytest, centers, method, distance, n_classes)))
     return raw, best
 
 
@@ -127,6 +141,8 @@ def summarize(directory):
     raw = pd.read_csv(directory / 'per_initialization.csv.gz')
     best = pd.read_csv(directory / 'best_objective_partitions.csv')
     config = json.loads((directory / 'provenance.json').read_text())['configuration']
+    n_classes = config.get('n_classes', 2)
+    fixed = f'k{n_classes}'
     expected = config['replicates'] * (config['steps']+1) * (config['max_k']-1) * config['initializations']
     assert len(raw) == expected and not raw.duplicated(['replicate', 'step', 'k', 'seed']).any()
     assert np.isfinite(raw[INDEXES].to_numpy()).all()
@@ -148,25 +164,25 @@ def summarize(directory):
     for step in range(config['steps']+1):
         overlap = 1-step/config['steps']
         for metric in INDEXES:
-            values = grid.loc[(grid.step == step) & (grid.k == 2), metric]
+            values = grid.loc[(grid.step == step) & (grid.k == n_classes), metric]
             choices = selected[(selected.step == step) & (selected.metric == metric)]
             summary.append(dict(step=step, overlap_pct=100*overlap,
                                 separation=separation_for_step(step, config['steps']), metric=metric,
-                                score_k2_mean=values.mean(), score_k2_p10=values.quantile(.1),
-                                score_k2_p90=values.quantile(.9), selected_k2_rate=(choices.selected_k == 2).mean(),
+                                **{f'score_{fixed}_mean':values.mean(), f'score_{fixed}_p10':values.quantile(.1),
+                                   f'score_{fixed}_p90':values.quantile(.9), f'selected_{fixed}_rate':(choices.selected_k == n_classes).mean()},
                                 selected_test_ARI_mean=choices.selected_test_ARI.mean()))
     pd.DataFrame(summary).to_csv(directory / 'sweep_summary.csv', index=False, float_format='%.12g')
     performance = []
-    for (step, method), group in best[best.k == 2].groupby(['step', 'method']):
+    for (step, method), group in best[best.k == n_classes].groupby(['step', 'method']):
         row = dict(step=step, overlap_pct=100*(1-step/config['steps']), method=method,
-                   bayes_accuracy=1-.5*(1-step/config['steps']))
+                   bayes_accuracy=float(bayes_accuracy(1-step/config['steps'], n_classes)))
         for column in ['test_ARI', 'test_accuracy', 'posterior_MSE', 'test_Brier', 'fuzzy_ambiguity']:
             row.update({column+'_mean': group[column].mean(), column+'_p10': group[column].quantile(.1),
                         column+'_p90': group[column].quantile(.9)})
         performance.append(row)
-    pd.DataFrame(performance).to_csv(directory / 'k2_performance.csv', index=False, float_format='%.12g')
+    pd.DataFrame(performance).to_csv(directory / f'{fixed}_performance.csv', index=False, float_format='%.12g')
     associations = []
-    for replicate, group in grid[grid.k == 2].groupby('replicate'):
+    for replicate, group in grid[grid.k == n_classes].groupby('replicate'):
         for metric in INDEXES:
             associations.append(dict(replicate=replicate, metric=metric,
                                      spearman_score_vs_step=spearmanr(group.step, group[metric]).statistic))
@@ -181,7 +197,8 @@ def summarize(directory):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output-dir', type=Path, default=Path('results/supplementary_overlap'))
+    parser.add_argument('--output-dir', type=Path)
+    parser.add_argument('--classes', dest='n_classes', type=int, choices=[2,3], default=2)
     parser.add_argument('--replicates', type=int, default=20)
     parser.add_argument('--initializations', type=int, default=100)
     parser.add_argument('--steps', type=int, default=10)
@@ -193,11 +210,13 @@ def main():
     parser.add_argument('--workers', type=int, default=4)
     parser.add_argument('--summarize-only', action='store_true')
     args = parser.parse_args()
+    if args.output_dir is None:
+        args.output_dir = Path('results/supplementary_overlap' + ('_3classes' if args.n_classes == 3 else ''))
     if args.summarize_only:
         summarize(args.output_dir)
         return
     config = {key: value for key, value in vars(args).items() if key not in ['output_dir', 'summarize_only', 'workers']}
-    if min(args.replicates, args.initializations, args.steps, args.n_per_class, args.test_per_class, args.workers, args.max_iter) < 1 or not 2 <= args.max_k <= 2*args.n_per_class or args.tol <= 0:
+    if min(args.replicates, args.initializations, args.steps, args.n_per_class, args.test_per_class, args.workers, args.max_iter) < 1 or not args.n_classes <= args.max_k <= args.n_classes*args.n_per_class or not np.isfinite(args.tol) or args.tol <= 0:
         parser.error('Invalid grid or fitting settings')
     args.output_dir.mkdir(parents=True, exist_ok=True)
     before = time.perf_counter()
@@ -220,7 +239,9 @@ def main():
                       random_design='SeedSequence([20261117, replicate, test_flag]); fixed base draws across overlap steps',
                       index_definition='Published SDB q=1, p=2, membership_power=1; FCM m=2',
                       kmeans_n_init=1, candidate_k=list(range(2,args.max_k+1)),
-                      overlap_definition='Integral min(f_left, f_right); triangular densities half-width 1; O(d)=(1-d/2)^2',
+                      overlap_definition='Adjacent-pair integral min(f_i, f_(i+1)); equally spaced triangular densities, half-width 1; O(d)=(1-d/2)^2',
+                      population_bayes_accuracy='1 - ((C-1)/C)*O; normalized Bayes error equals adjacent overlap O',
+                      posterior_error_definition='Mean squared error averaged over observations and class columns; test_Brier is the per-class mean of multiclass Brier components',
                       score_sha256=hashlib.sha256(score_path.read_bytes()).hexdigest(),
                       code_sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__), ROOT/'scripts/python/sdb/fcm.py', ROOT/'scripts/python/sdb/index.py']})
     (args.output_dir/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')

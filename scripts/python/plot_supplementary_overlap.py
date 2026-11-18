@@ -100,6 +100,11 @@ def draw(directory, output):
     x = np.linspace(-limit, limit, 2001)
     rows = int(np.ceil((steps+2)/4))
     fig, axes = plt.subplots(rows,4,figsize=(16 if n_features==3 else 15,(3.8 if n_features==3 else 3.5 if n_features==2 else 2.86)*rows),layout='constrained',sharex=True,sharey=True,squeeze=False,subplot_kw={'projection':'3d'} if n_features==3 else {})
+    if n_features==3:
+        # Matplotlib's automatic layout underestimates projected 3D labels.
+        fig.set_layout_engine(None)
+        fig.subplots_adjust(left=.02,right=.95,bottom=.09,top=.80 if rows==1 else .90,
+                            wspace=.13,hspace=.30)
     for step, ax in enumerate(axes.flat):
         if step > steps:
             ax.axis('off')

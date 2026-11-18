@@ -1,6 +1,7 @@
-"""Publication figures for the independent 1D/2D overlap supplementary analysis."""
+"""Publication figures for the independent 1D/2D/3D overlap analysis."""
 import argparse
 import json
+from itertools import product, combinations
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -45,12 +46,40 @@ def draw_two_feature_cloud(ax, config, step, *, legend=False):
         ax.legend(loc='upper left',fontsize=7,framealpha=.9,markerscale=1.7)
 
 
+def draw_three_feature_cloud(ax, config, step, *, legend=False):
+    classes=config['n_classes']
+    d=config['separations'][step] if 'separations' in config else separation_for_step(step,config['steps'],3)
+    x,labels=make_data(0,d,config['n_per_class'],n_classes=classes,n_features=3)
+    colors,_=class_appearance(classes)
+    vertices=np.array(list(product([-1.,1.],repeat=3)))
+    for j,(center,color,marker) in enumerate(zip(generating_centers(d,classes),colors,['o','s','^','D','P'])):
+        subset=x[labels==j]
+        ax.scatter(*subset.T,s=9,marker=marker,c=color,alpha=.38,edgecolors='none',label=f'Classe {j+1}',depthshade=False)
+        for first,second in combinations(vertices,2):
+            if np.count_nonzero(first!=second)==1:
+                edge=np.stack([first,second])+center
+                ax.plot(*edge.T,color=color,linewidth=.45,alpha=.25)
+        ax.scatter([center],[center],[center],marker='x',color=color,s=30,linewidths=1.2)
+    bound=classes+.1
+    ax.set(xlim=(-bound,bound),ylim=(-bound,bound),zlim=(-bound,bound),
+           xlabel='Feature 1',ylabel='Feature 2',zlabel='Feature 3',
+           title=f'Passo {step}: sovrapposizione {100*(1-step/config["steps"]):.0f}%')
+    ax.set_box_aspect((1,1,1))
+    ax.view_init(elev=20,azim=-60)
+    ax.tick_params(labelsize=7,pad=0)
+    ax.xaxis.labelpad=0
+    ax.yaxis.labelpad=0
+    ax.zaxis.labelpad=0
+    if legend:
+        ax.legend(loc='upper left',fontsize=6.5,framealpha=.9,markerscale=1.5)
+
+
 def draw(directory, output):
     config = json.loads((directory/'provenance.json').read_text())['configuration']
     steps = config['steps']
     n_classes = config.get('n_classes',2)
     n_features = config.get('n_features',1)
-    prefix = f'overlap_2features_{n_classes}classes' if n_features==2 else ('overlap' if n_classes==2 else f'overlap_{n_classes}classes')
+    prefix = f'overlap_{n_features}features_{n_classes}classes' if n_features>1 else ('overlap' if n_classes==2 else f'overlap_{n_classes}classes')
     class_colors, class_styles = class_appearance(n_classes)
     fixed = f'k{n_classes}'
     limit = n_classes+.1
@@ -63,20 +92,23 @@ def draw(directory, output):
         if n_features==1:
             record['x']=observations[:,0]
         else:
-            record.update(x1=observations[:,0],x2=observations[:,1])
+            record.update({f'x{j+1}':observations[:,j] for j in range(n_features)})
         for j in ([1] if n_classes==2 and n_features==1 else range(n_classes)):
             record[f'posterior_class_{j}']=posterior[:,j]
         examples.append(pd.DataFrame(record))
     pd.concat(examples).to_csv(directory/'example_datasets.csv',index=False,float_format='%.12g')
     x = np.linspace(-limit, limit, 2001)
     rows = int(np.ceil((steps+2)/4))
-    fig, axes = plt.subplots(rows,4,figsize=(15,(3.5 if n_features==2 else 2.86)*rows),layout='constrained',sharex=True,sharey=True,squeeze=False)
+    fig, axes = plt.subplots(rows,4,figsize=(16 if n_features==3 else 15,(3.8 if n_features==3 else 3.5 if n_features==2 else 2.86)*rows),layout='constrained',sharex=True,sharey=True,squeeze=False,subplot_kw={'projection':'3d'} if n_features==3 else {})
     for step, ax in enumerate(axes.flat):
         if step > steps:
             ax.axis('off')
             if step == steps+1:
-                explanation=(f'Two informative features\nIndependent noise within class\nJoint density overlap calibrated\n\nPoints: replicate 0 observations\nSquares: class support limits\nCrosses: generating centers' if n_features==2 else f'One observed variable\nEqual class priors\nTriangular class densities\n\nShaded area = overlap\nStep 0: indistinguishable classes\nStep {steps}: exclusive almost surely')
-                ax.text(.03,.88,explanation,transform=ax.transAxes,va='top',fontsize=11,linespacing=1.5)
+                explanation=(f'{n_features} informative features\nIndependent noise within class\nJoint density overlap calibrated\n\nPoints: replicate 0 observations\nBoxes: class support limits\nCrosses: generating centers' if n_features>1 else f'One observed variable\nEqual class priors\nTriangular class densities\n\nShaded area = overlap\nStep 0: indistinguishable classes\nStep {steps}: exclusive almost surely')
+                (ax.text2D if n_features==3 else ax.text)(.03,.88,explanation,transform=ax.transAxes,va='top',fontsize=11,linespacing=1.5)
+            continue
+        if n_features==3:
+            draw_three_feature_cloud(ax,config,step,legend=step==0)
             continue
         if n_features==2:
             draw_two_feature_cloud(ax,config,step,legend=step==0)
@@ -92,7 +124,7 @@ def draw(directory, output):
         if step % 4 == 0: ax.set_ylabel('Class density')
         if step >= (rows-1)*4: ax.set_xlabel('Observed variable x')
         if step == 0: ax.legend(fontsize=8, loc='lower left')
-    fig.suptitle(f'Supplementary analysis · {n_classes} classes · {n_features} feature(s) · {steps+1} exact overlap levels',fontsize=18,fontweight='bold')
+    fig.suptitle(f'Supplementary analysis · {n_classes} classes · {n_features} feature(s) · {steps+1} calibrated overlap levels',fontsize=18,fontweight='bold')
     save(fig, output/f'{prefix}_distributions')
 
     summary = pd.read_csv(directory/'sweep_summary.csv')

@@ -1,4 +1,4 @@
-"""Supplementary 1D/2D experiment: exact density-overlap steps, outside the paper.
+"""Supplementary 1D/2D/3D experiment: density-overlap steps, outside the paper.
 
 Run from the repository root. Use --summarize-only to rebuild tables/figures from
 the committed scores. No archived/private data are required.
@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 import platform
 import time
+from functools import lru_cache
 
 import numpy as np
 import pandas as pd
@@ -21,6 +22,7 @@ from sklearn.metrics import adjusted_rand_score
 from threadpoolctl import threadpool_limits
 
 from sdb import davies_bouldin_crisp, fuzzy_c_means, soft_davies_bouldin
+from overlap_geometry import three_feature_overlap
 
 
 INDEXES = ['DB_kmeans', 'DB_fcm_hard', 'SDB_fcm']
@@ -30,23 +32,26 @@ ROOT = Path(__file__).resolve().parents[2]
 def joint_overlap(separation, n_features=1):
     """Adjacent density overlap for triangular products shifted on the diagonal."""
     d = np.asarray(separation, dtype=float)
-    if n_features not in [1,2] or np.any((d<0)|(d>2)|~np.isfinite(d)):
-        raise ValueError('Require one or two features and 0 <= separation <= 2')
+    if n_features not in [1,2,3] or np.any((d<0)|(d>2)|~np.isfinite(d)):
+        raise ValueError('Require one, two or three features and 0 <= separation <= 2')
     if n_features == 1:
         return (1-d/2)**2
+    if n_features == 3:
+        return np.vectorize(three_feature_overlap, otypes=[float])(d)
     # 2*P(T1+T2 > d), Ti independent Triangular(-1,0,1).
     return ((2-d)**4 - 4*np.maximum(1-d,0)**4)/12
 
 
+@lru_cache(maxsize=128)
 def separation_for_step(step, steps=10, n_features=1):
     """Invert the joint overlap; preserve the original 1D closed form."""
     if steps < 1 or not 0 <= step <= steps:
         raise ValueError('Require 0 <= step <= steps and steps >= 1')
     if n_features == 1:
         return float(2 * (1 - np.sqrt(1 - step / steps)))
-    if n_features != 2:
-        raise ValueError('Require one or two features')
-    return float(brentq(lambda d: joint_overlap(d,2)-(1-step/steps),0.,2.,xtol=1e-14))
+    if n_features not in [2,3]:
+        raise ValueError('Require one, two or three features')
+    return float(brentq(lambda d: joint_overlap(d,n_features)-(1-step/steps),0.,2.,xtol=1e-12 if n_features==3 else 1e-14))
 
 
 def density(x, center):
@@ -86,11 +91,13 @@ def make_data(replicate, separation, n_per_class=100, *, test=False, n_classes=2
     order = rng.permutation(labels.size)
     if n_features == 1:
         return x[order, None], labels[order]
-    if n_features != 2:
-        raise ValueError('Require one or two features')
-    second_rng = np.random.default_rng(np.random.SeedSequence([20261117,replicate,int(test),2]))
-    second = second_rng.triangular(-1.,0.,1.,size=labels.size)+generating_centers(separation,n_classes)[labels]
-    return np.column_stack([x,second])[order],labels[order]
+    if n_features not in [2,3]:
+        raise ValueError('Require one, two or three features')
+    coordinates=[x]
+    for feature in range(2,n_features+1):
+        feature_rng = np.random.default_rng(np.random.SeedSequence([20261117,replicate,int(test),feature]))
+        coordinates.append(feature_rng.triangular(-1.,0.,1.,size=labels.size)+generating_centers(separation,n_classes)[labels])
+    return np.column_stack(coordinates)[order],labels[order]
 
 
 def squared_distances(x, centers):
@@ -137,7 +144,7 @@ def run_replicate(config, replicate):
     n_features = config.get('n_features', 1)
     with threadpool_limits(limits=1):
         for step in range(config['steps'] + 1):
-            distance = separation_for_step(step, config['steps'], n_features)
+            distance = config['separations'][step] if 'separations' in config else separation_for_step(step, config['steps'], n_features)
             x, _ = make_data(replicate,distance,config['n_per_class'],n_classes=n_classes,n_features=n_features)
             xtest, ytest = make_data(replicate,distance,config['test_per_class'],test=True,n_classes=n_classes,n_features=n_features)
             for k in range(2, config['max_k'] + 1):
@@ -221,13 +228,19 @@ def summarize(directory):
             associations.append(dict(replicate=replicate, metric=metric,
                                      spearman_score_vs_step=spearmanr(group.step, group[metric]).statistic))
     pd.DataFrame(associations).to_csv(directory / 'separation_sensitivity.csv', index=False, float_format='%.12g')
-    if n_features == 2:
+    if n_features > 1:
         calibration=[]
         for step in range(config['steps']+1):
-            distance=separation_for_step(step,config['steps'],2)
-            calibration.append(dict(step=step,joint_overlap_pct=100*float(joint_overlap(distance,2)),
+            distance=separation_for_step(step,config['steps'],n_features)
+            record=dict(step=step,joint_overlap_pct=100*float(joint_overlap(distance,n_features)),
                                     per_feature_overlap_pct=100*float(joint_overlap(distance,1)),
-                                    per_feature_shift=distance,euclidean_center_distance=np.sqrt(2)*distance))
+                                    per_feature_shift=distance,euclidean_center_distance=np.sqrt(n_features)*distance)
+            if n_features==3:
+                reference=three_feature_overlap(distance,512)
+                record.update(joint_overlap_order512_pct=100*reference,
+                              quadrature_order_difference=abs(reference-float(joint_overlap(distance,3))))
+                assert abs(reference-(1-step/config['steps']))<1e-7
+            calibration.append(record)
         pd.DataFrame(calibration).to_csv(directory/'overlap_calibration.csv',index=False,float_format='%.12g')
     diagnostics = dict(configurations=len(raw), index_values=int(raw[INDEXES].size),
                        fcm_at_limit=int(raw.fcm_at_limit.sum()), kmeans_at_limit=int(raw.kmeans_at_limit.sum()),
@@ -241,7 +254,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output-dir', type=Path)
     parser.add_argument('--classes', dest='n_classes', type=int, choices=[2,3,4,5], default=2)
-    parser.add_argument('--features', dest='n_features', type=int, choices=[1,2], default=1)
+    parser.add_argument('--features', dest='n_features', type=int, choices=[1,2,3], default=1)
     parser.add_argument('--replicates', type=int, default=20)
     parser.add_argument('--initializations', type=int, default=100)
     parser.add_argument('--steps', type=int, default=10)
@@ -254,7 +267,7 @@ def main():
     parser.add_argument('--summarize-only', action='store_true')
     args = parser.parse_args()
     if args.output_dir is None:
-        suffix=f'_2features_{args.n_classes}classes' if args.n_features==2 else (f'_{args.n_classes}classes' if args.n_classes>2 else '')
+        suffix=f'_{args.n_features}features_{args.n_classes}classes' if args.n_features>1 else (f'_{args.n_classes}classes' if args.n_classes>2 else '')
         args.output_dir = Path('results/supplementary_overlap'+suffix)
     if args.summarize_only:
         summarize(args.output_dir)
@@ -264,6 +277,9 @@ def main():
         parser.error('Invalid grid or fitting settings')
     args.output_dir.mkdir(parents=True, exist_ok=True)
     before = time.perf_counter()
+    if args.n_features==3:
+        config['separations']=[separation_for_step(step,args.steps,3) for step in range(args.steps+1)]
+        print('Calibrated three-feature joint overlap: '+json.dumps(config['separations']),flush=True)
     raw, best = [], []
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
         jobs = [pool.submit(run_replicate, config, replicate) for replicate in range(args.replicates)]
@@ -280,15 +296,15 @@ def main():
     provenance = dict(configuration=config, workers=args.workers, python=platform.python_version(),
                       packages={package: version(package) for package in ['numpy','scipy','pandas','scikit-learn','matplotlib','threadpoolctl']},
                       runtime_seconds=time.perf_counter()-before,
-                      random_design='Feature 1 and order: SeedSequence([20261117, replicate, test_flag]); feature 2: independent SeedSequence([20261117, replicate, test_flag, 2]); fixed base draws across steps',
+                      random_design='Feature 1 and order: SeedSequence([20261117, replicate, test_flag]); feature r>=2: independent SeedSequence([20261117, replicate, test_flag, r]); fixed base draws across steps',
                       index_definition='Published SDB q=1, p=2, membership_power=1; FCM m=2',
                       kmeans_n_init=1, candidate_k=list(range(2,args.max_k+1)),
-                      overlap_definition=('Adjacent-pair integral min(f_i, f_(i+1)); 1D triangular densities: O(d)=(1-d/2)^2' if args.n_features==1 else 'Adjacent-pair integral min(f_i, f_(i+1)) over R^2; product triangular densities shifted by (d,d); O(d)=((2-d)^4-4*max(1-d,0)^4)/12'),
+                      overlap_definition={1:'Adjacent-pair integral min(f_i, f_(i+1)); 1D triangular densities: O(d)=(1-d/2)^2',2:'Adjacent-pair integral min(f_i, f_(i+1)) over R^2; product triangular densities shifted by (d,d); O(d)=((2-d)^4-4*max(1-d,0)^4)/12',3:'Adjacent-pair integral min(f_i, f_(i+1)) over R^3; product triangular densities shifted by (d,d,d); exact integration of piecewise linear minimum in coordinate 3, tensor Gauss-Legendre order 256 per knot segment in coordinates 1/2; checked at order 512; root tolerance 1e-12'}[args.n_features],
                       geometry=f'Equal priors; {args.n_per_class} training samples per class; centers equally spaced along (1,...,1); independent triangular noise per feature, half-width 1',
                       population_bayes_accuracy='1 - ((C-1)/C)*O; normalized Bayes error equals adjacent overlap O',
                       posterior_error_definition='Mean squared error averaged over observations and class columns; test_Brier is the per-class mean of multiclass Brier components',
                       score_sha256=hashlib.sha256(score_path.read_bytes()).hexdigest(),
-                      code_sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__), ROOT/'scripts/python/sdb/fcm.py', ROOT/'scripts/python/sdb/index.py']})
+                      code_sha256={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__), ROOT/'scripts/python/overlap_geometry.py', ROOT/'scripts/python/sdb/fcm.py', ROOT/'scripts/python/sdb/index.py']})
     (args.output_dir/'provenance.json').write_text(json.dumps(provenance, indent=2)+'\n')
     summarize(args.output_dir)
 

@@ -1,9 +1,10 @@
-"""Publication figures for the independent 1D overlap supplementary analysis."""
+"""Publication figures for the independent 1D/2D overlap supplementary analysis."""
 import argparse
 import json
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 import numpy as np
 import pandas as pd
 
@@ -26,32 +27,59 @@ def save(fig, path):
     plt.close(fig)
 
 
+def draw_two_feature_cloud(ax, config, step, *, legend=False):
+    classes=config['n_classes']
+    d=separation_for_step(step,config['steps'],2)
+    x,labels=make_data(0,d,config['n_per_class'],n_classes=classes,n_features=2)
+    colors,_=class_appearance(classes)
+    for j,(center,color,marker) in enumerate(zip(generating_centers(d,classes),colors,['o','s','^','D','P'])):
+        subset=x[labels==j]
+        ax.scatter(subset[:,0],subset[:,1],s=10,marker=marker,c=color,alpha=.5,edgecolors='none',label=f'Classe {j+1}')
+        ax.add_patch(Rectangle((center-1,center-1),2,2,fill=False,edgecolor=color,linewidth=.8,alpha=.65))
+        ax.plot(center,center,marker='x',color=color,ms=6)
+    ax.set(xlim=(-classes-.1,classes+.1),ylim=(-classes-.1,classes+.1),
+           xlabel='Feature 1',ylabel='Feature 2',title=f'Passo {step}: sovrapposizione {100*(1-step/config["steps"]):.0f}%')
+    ax.set_aspect('equal',adjustable='box')
+    ax.grid(alpha=.15)
+    if legend:
+        ax.legend(loc='upper left',fontsize=7,framealpha=.9,markerscale=1.7)
+
+
 def draw(directory, output):
     config = json.loads((directory/'provenance.json').read_text())['configuration']
     steps = config['steps']
     n_classes = config.get('n_classes',2)
-    prefix = 'overlap' if n_classes==2 else f'overlap_{n_classes}classes'
+    n_features = config.get('n_features',1)
+    prefix = f'overlap_2features_{n_classes}classes' if n_features==2 else ('overlap' if n_classes==2 else f'overlap_{n_classes}classes')
     class_colors, class_styles = class_appearance(n_classes)
     fixed = f'k{n_classes}'
     limit = n_classes+.1
     examples = []
     for step in range(steps+1):
-        d = separation_for_step(step, steps)
-        observations, labels = make_data(0, d, config['n_per_class'], n_classes=n_classes)
-        posterior = posterior_probabilities(observations[:,0],d,n_classes)
-        record={'step':step,'overlap_pct':100*(1-step/steps),'x':observations[:,0],'class':labels}
-        for j in ([1] if n_classes==2 else range(n_classes)):
+        d = separation_for_step(step, steps, n_features)
+        observations, labels = make_data(0,d,config['n_per_class'],n_classes=n_classes,n_features=n_features)
+        posterior = posterior_probabilities(observations[:,0] if n_features==1 else observations,d,n_classes,n_features)
+        record={'step':step,'overlap_pct':100*(1-step/steps),'class':labels}
+        if n_features==1:
+            record['x']=observations[:,0]
+        else:
+            record.update(x1=observations[:,0],x2=observations[:,1])
+        for j in ([1] if n_classes==2 and n_features==1 else range(n_classes)):
             record[f'posterior_class_{j}']=posterior[:,j]
         examples.append(pd.DataFrame(record))
     pd.concat(examples).to_csv(directory/'example_datasets.csv',index=False,float_format='%.12g')
     x = np.linspace(-limit, limit, 2001)
     rows = int(np.ceil((steps+2)/4))
-    fig, axes = plt.subplots(rows, 4, figsize=(15, 2.86*rows), layout='constrained', sharex=True, sharey=True, squeeze=False)
+    fig, axes = plt.subplots(rows,4,figsize=(15,(3.5 if n_features==2 else 2.86)*rows),layout='constrained',sharex=True,sharey=True,squeeze=False)
     for step, ax in enumerate(axes.flat):
         if step > steps:
             ax.axis('off')
             if step == steps+1:
-                ax.text(.03, .88, f'One observed variable\nEqual class priors\nTriangular class densities\n\nShaded area = overlap\nStep 0: indistinguishable classes\nStep {steps}: exclusive almost surely', transform=ax.transAxes, va='top', fontsize=11, linespacing=1.5)
+                explanation=(f'Two informative features\nIndependent noise within class\nJoint density overlap calibrated\n\nPoints: replicate 0 observations\nSquares: class support limits\nCrosses: generating centers' if n_features==2 else f'One observed variable\nEqual class priors\nTriangular class densities\n\nShaded area = overlap\nStep 0: indistinguishable classes\nStep {steps}: exclusive almost surely')
+                ax.text(.03,.88,explanation,transform=ax.transAxes,va='top',fontsize=11,linespacing=1.5)
+            continue
+        if n_features==2:
+            draw_two_feature_cloud(ax,config,step,legend=step==0)
             continue
         d = separation_for_step(step, steps)
         curves=[density(x,center) for center in generating_centers(d,n_classes)]
@@ -64,7 +92,7 @@ def draw(directory, output):
         if step % 4 == 0: ax.set_ylabel('Class density')
         if step >= (rows-1)*4: ax.set_xlabel('Observed variable x')
         if step == 0: ax.legend(fontsize=8, loc='lower left')
-    fig.suptitle(f'Supplementary analysis · {n_classes} classes · {steps+1} exact overlap levels', fontsize=18, fontweight='bold')
+    fig.suptitle(f'Supplementary analysis · {n_classes} classes · {n_features} feature(s) · {steps+1} exact overlap levels',fontsize=18,fontweight='bold')
     save(fig, output/f'{prefix}_distributions')
 
     summary = pd.read_csv(directory/'sweep_summary.csv')
@@ -92,7 +120,7 @@ def draw(directory, output):
         ax.set_xticks(range(steps+1))
         ax.grid(alpha=.2)
     for ax in axes[1]: ax.legend(fontsize=8,loc='best')
-    fig.suptitle(f'Supplementary overlap sweep · {config["replicates"]} datasets × {config["initializations"]} initializations per K\n100%, 90%, …, 0% overlap · bands: 10th–90th percentiles across datasets',fontsize=16,fontweight='bold')
+    fig.suptitle(f'Supplementary overlap sweep · {n_features} feature(s) · {config["replicates"]} datasets × {config["initializations"]} initializations per K\n100%, 90%, …, 0% joint overlap · bands: 10th–90th percentiles across datasets',fontsize=16,fontweight='bold')
     save(fig, output/f'{prefix}_results')
 
     selected = pd.read_csv(directory/'selected_k.csv')
@@ -107,7 +135,7 @@ def draw(directory, output):
         ax.set(title=label,xlabel='Selected K',xticks=range(config['max_k']-1),xticklabels=range(2,config['max_k']+1),yticks=range(steps+1),yticklabels=[f'{s} ({100*(1-s/steps):.0f}%)' for s in range(steps+1)])
     axes[0].set_ylabel('Step (remaining overlap)')
     fig.colorbar(im,ax=axes,shrink=.8,label='Fraction of independent datasets')
-    fig.suptitle(f'Cluster-count selection · {n_classes} generating classes\nK=1 is undefined for all three indices; step 0 has a single observable distribution',fontsize=15,fontweight='bold')
+    fig.suptitle(f'Cluster-count selection · {n_classes} generating classes · {n_features} feature(s)\nK=1 is undefined for all three indices; step 0 has a single observable distribution',fontsize=15,fontweight='bold')
     save(fig,output/f'{prefix}_selected_k')
 
 

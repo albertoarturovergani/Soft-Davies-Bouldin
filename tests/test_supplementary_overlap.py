@@ -80,7 +80,7 @@ def test_binary_seeded_scores_remain_reproducible():
     np.testing.assert_allclose(actual[columns],saved[columns],rtol=1e-12,atol=1e-12)
 
 
-@pytest.mark.parametrize('result_name',['supplementary_overlap',*[f'supplementary_overlap_{n}classes' for n in [3,4,5]],*[f'supplementary_overlap_2features_{n}classes' for n in [2,3,4,5]]])
+@pytest.mark.parametrize('result_name',['supplementary_overlap',*[f'supplementary_overlap_{n}classes' for n in [3,4,5]],*[f'supplementary_overlap_{d}features_{n}classes' for d in [2,3] for n in [2,3,4,5]]])
 def test_saved_supplementary_grid(result_name):
     import json
     import pandas as pd

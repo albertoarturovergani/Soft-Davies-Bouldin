@@ -1,0 +1,59 @@
+{
+  "configuration": {
+    "n_classes": 4,
+    "n_features": 3,
+    "replicates": 20,
+    "initializations": 100,
+    "steps": 10,
+    "n_per_class": 100,
+    "test_per_class": 2000,
+    "max_k": 6,
+    "max_iter": 1000,
+    "tol": 1e-07,
+    "separations": [
+      0.0,
+      0.05826541175290603,
+      0.11811712902248005,
+      0.18048981413495468,
+      0.24658420953997434,
+      0.3180865293012028,
+      0.39760806854854885,
+      0.48971860422306407,
+      0.6039935822702225,
+      0.7685629743054891,
+      2.0
+    ]
+  },
+  "workers": 12,
+  "python": "3.12.14",
+  "packages": {
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "threadpoolctl": "3.8.0"
+  },
+  "runtime_seconds": 1357.4101340000052,
+  "random_design": "Feature 1 and order: SeedSequence([20261117, replicate, test_flag]); feature r>=2: independent SeedSequence([20261117, replicate, test_flag, r]); fixed base draws across steps",
+  "index_definition": "Published SDB q=1, p=2, membership_power=1; FCM m=2",
+  "kmeans_n_init": 1,
+  "candidate_k": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "overlap_definition": "Adjacent-pair integral min(f_i, f_(i+1)) over R^3; product triangular densities shifted by (d,d,d); exact integration of piecewise linear minimum in coordinate 3, tensor Gauss-Legendre order 256 per knot segment in coordinates 1/2; checked at order 512; root tolerance 1e-12",
+  "geometry": "Equal priors; 100 training samples per class; centers equally spaced along (1,...,1); independent triangular noise per feature, half-width 1",
+  "population_bayes_accuracy": "1 - ((C-1)/C)*O; normalized Bayes error equals adjacent overlap O",
+  "posterior_error_definition": "Mean squared error averaged over observations and class columns; test_Brier is the per-class mean of multiclass Brier components",
+  "score_sha256": "6f9c4de43698da18f22a50dac97e723946e7d10cbdbb668a255e5b906432804b",
+  "code_sha256": {
+    "supplementary_overlap.py": "a6a9caec6230b61b410af8d721b071587c21f9c2745175cb649ce1bc4d9c98a0",
+    "overlap_geometry.py": "3fed4b150e415f06a958abcc8d969cf60b2c033d04c5f30c5f7c47884ab9bdf3",
+    "fcm.py": "d473f2c1959bf7283d341047300ae0c6b83965d6f1bf221ecda0fe635e7b6c0a",
+    "index.py": "3b3269e42c34dd9a13c6dc8fe567d170443a7497aa87be151096d90525e9352e"
+  }
+}

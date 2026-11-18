@@ -176,3 +176,5 @@ pytest -q
 ```
 
 The worker count changes scheduling only; each solver is limited to one numerical-library thread. To rebuild tables without refitting, add `--summarize-only` to the corresponding `supplementary_overlap.py --classes C` command. Use a separate `--output-dir` under `results/recomputed/` for alternative settings. Existing two- and three-class archives and figures remain unchanged.
+
+**Two-feature follow-up:** [Technical note 4](TECHNICAL_NOTES_TWO_FEATURES.md) repeats the 2–5-class studies with two informative features at matched joint overlap and 100 initializations.

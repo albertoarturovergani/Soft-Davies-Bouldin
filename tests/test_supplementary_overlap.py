@@ -8,7 +8,8 @@ from scipy.integrate import quad
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts' / 'python'))
 from supplementary_overlap import (bayes_accuracy, density, generating_centers, make_data,
                                    posterior_probabilities, predict_membership, run_replicate,
-                                   separation_for_step, true_posterior)
+                                   separation_for_step, true_posterior, joint_overlap,
+                                   squared_distances, evaluate_best)
 
 
 def test_exact_ten_percent_overlap_steps():
@@ -79,7 +80,7 @@ def test_binary_seeded_scores_remain_reproducible():
     np.testing.assert_allclose(actual[columns],saved[columns],rtol=1e-12,atol=1e-12)
 
 
-@pytest.mark.parametrize('result_name',['supplementary_overlap',*[f'supplementary_overlap_{n}classes' for n in [3,4,5]]])
+@pytest.mark.parametrize('result_name',['supplementary_overlap',*[f'supplementary_overlap_{n}classes' for n in [3,4,5]],*[f'supplementary_overlap_2features_{n}classes' for n in [2,3,4,5]]])
 def test_saved_supplementary_grid(result_name):
     import json
     import pandas as pd
@@ -104,3 +105,56 @@ def test_saved_supplementary_grid(result_name):
     for (replicate, step, metric), group in selection.groupby(['replicate','step','metric']):
         assert len(group) == 1
         assert group.selected_k.iloc[0] == actual.loc[(replicate,step),metric].idxmin()
+
+
+def test_two_feature_overlap_by_independent_double_quadrature():
+    for step in range(11):
+        d=separation_for_step(step,n_features=2)
+        if step==10:
+            area=0.
+        else:
+            lo,hi=d-1,1.
+            def inner(x):
+                points=sorted({v for v in [0,d,d-x] if lo<v<hi})
+                return quad(lambda y:min(density(x,0)*density(y,0),density(x,d)*density(y,d)),
+                            lo,hi,points=points,epsabs=1e-11)[0]
+            area=quad(inner,lo,hi,points=[v for v in [0,d] if lo<v<hi],epsabs=1e-10)[0]
+        assert area==pytest.approx(1-step/10,abs=1e-9)
+        assert float(joint_overlap(d,2))==pytest.approx(area,abs=1e-9)
+        if 0<step<10:
+            assert joint_overlap(d,1)>joint_overlap(d,2)
+
+
+@pytest.mark.parametrize('n_classes',[2,3,4,5])
+def test_two_feature_data_posteriors_and_bayes_envelope(n_classes):
+    x0,y0=make_data(3,0,2000,n_classes=n_classes,n_features=2)
+    x2,y2=make_data(3,2,2000,n_classes=n_classes,n_features=2)
+    x1,y1=make_data(3,0,2000,n_classes=n_classes)
+    assert x0.shape==(2000*n_classes,2)
+    np.testing.assert_array_equal(x0[:,0],x1[:,0])
+    np.testing.assert_array_equal(y0,y1)
+    np.testing.assert_array_equal(y0,y2)
+    offsets=np.repeat(generating_centers(2,n_classes)[y0,None],2,axis=1)
+    np.testing.assert_allclose(x2-x0,offsets,atol=1e-15)
+    assert np.linalg.det(np.cov(x0.T))>.02
+    assert abs(np.corrcoef(x0.T)[0,1])<.05
+    np.testing.assert_allclose(posterior_probabilities(x0,0,n_classes,2),1/n_classes)
+    np.testing.assert_allclose(posterior_probabilities(x2,2,n_classes,2),np.eye(n_classes)[y2])
+    centers=np.repeat(generating_centers(2,n_classes)[:,None],2,axis=1)
+    assert evaluate_best(x2,y2,centers,'FCM',2,n_classes,2)['test_accuracy']==1.
+    grid=np.stack(np.meshgrid(np.linspace(-n_classes,n_classes,121),np.linspace(-n_classes,n_classes,121)),axis=-1).reshape(-1,2)
+    for step in range(11):
+        d=separation_for_step(step,n_features=2)
+        centers=generating_centers(d,n_classes)
+        values=np.prod(density(grid[:,None,:],centers[None,:,None]),axis=2)
+        envelope=values.sum(axis=1)-np.minimum(values[:,:-1],values[:,1:]).sum(axis=1)
+        np.testing.assert_allclose(envelope,values.max(axis=1),atol=1e-12)
+        nearest=np.abs(grid.mean(axis=1)[:,None]-centers[None,:]).argmin(axis=1)
+        np.testing.assert_allclose(values[np.arange(len(grid)),nearest],values.max(axis=1),atol=1e-12)
+
+
+def test_two_feature_membership_and_training_distances_use_both_coordinates():
+    x=np.array([[0.,0.],[2.,0.],[1.,1.],[0.,2.]])
+    centers=np.array([[0.,0.],[2.,0.]])
+    np.testing.assert_allclose(squared_distances(x,centers),[[0,4],[4,0],[2,2],[4,8]])
+    np.testing.assert_allclose(predict_membership(x,centers),[[1,0],[0,1],[.5,.5],[2/3,1/3]])

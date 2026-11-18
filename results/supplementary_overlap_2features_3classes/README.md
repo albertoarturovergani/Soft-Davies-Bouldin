@@ -1,0 +1,9 @@
+# Two features, 3 classes — supplementary analysis
+
+Entirely synthetic two-feature data: 3 equal-prior products of triangular densities, with independent noise within class and centers along the diagonal. Eleven **joint adjacent-density overlap levels** from 100% to 0%, 20 dataset replicates, 100 starts per K=2–6. Each class has 100 training and 2,000 independent test observations. There are 110,000 configurations and 330,000 finite index values.
+
+At disjointness, DB/k-means, DB/hardened FCM and SDB/FCM select K=3 in **20/20**, **20/20** and **16/20** datasets respectively. See [Technical note 4](../../docs/TECHNICAL_NOTES_TWO_FEATURES.md) for the full sweep and the matched-overlap comparison with one feature. All new figures use linear axes.
+
+`per_initialization.csv.gz` contains all 110,000 synthetic configurations. `mean_scores.csv`, `selected_k.csv` and `sweep_summary.csv` contain start means, per-dataset K choices and sweep frequencies. `best_objective_partitions.csv` and `k3_performance.csv` contain independent-test metrics. `example_datasets.csv` contains the first replicate, both features and true posteriors. `overlap_calibration.csv` distinguishes joint overlap, marginal overlap, coordinate shift and Euclidean center distance. `separation_sensitivity.csv` contains fixed-K score/rank correlations. `diagnostics.json` and `provenance.json` record fitting checks, settings, versions and hashes.
+
+The `convergence_sensitivity*` files extend 739 capped FCM runs to 10,000 iterations; 0/660 K choices change. `convergence_recovery_rates.csv` shows whether each criterion/step frequency changes (0/33). Primary results are retained. K=1 is undefined: target-K selection frequencies at complete overlap are not correct-count recovery. No original fMRI or participant data appear here.

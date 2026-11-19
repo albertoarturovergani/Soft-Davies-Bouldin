@@ -12,6 +12,7 @@ htmlcov/
 .local_overlap_checkpoints/
 # Shared calibration cache; checked copies are saved in every ten-feature bundle.
 results/supplementary_overlap_10features_calibration/
+results/supplementary_overlap_100features_calibration/
 data/original/*
 !data/original/.gitkeep
 data/benchmarks/

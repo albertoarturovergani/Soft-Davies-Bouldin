@@ -290,6 +290,7 @@ Extending all **43 capped FCM fits** to 10,000 iterations leaves **0** at the ca
 ![Hundred-feature recovery](results/figures/overlap_100features_2_to_5_recovery.png)
 
 Read [Technical note 7: one hundred features](docs/TECHNICAL_NOTES_HUNDRED_FEATURES.md) for the full sweep, four dataset projections per class count, numerical overlap checks and the [comparison with 1, 2, 3 and 10 features](results/figures/overlap_1_vs_2_vs_3_vs_10_vs_100_features.png). Earlier results remain unchanged; the interrupted 3-feature/5-class study remains unavailable. This one collinear geometry does not establish universal dimensionality benefits.
+Follow-up: [Technical note 8: why SDB selects too few separated clusters](docs/TECHNICAL_NOTES_SDB_UNDERCOUNTING.md). Exact noiseless counterexamples and controlled formula comparisons explain the role of global scatter and collinear geometry.
 <!-- hundred-feature-overlap:end -->
 
 ## Testing

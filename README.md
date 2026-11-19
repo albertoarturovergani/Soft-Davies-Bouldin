@@ -226,9 +226,43 @@ Extending all **3,256 capped FCM fits** to 10,000 iterations leaves **0** at the
 Read [Technical note 4: two features](docs/TECHNICAL_NOTES_TWO_FEATURES.md) for the complete sweep, the [one-versus-two-feature comparison](results/figures/overlap_1_vs_2_features.png), four dataset examples per class count, convergence sensitivity and full synthetic data. Percentages are calibrated on joint density overlap, not on each coordinate separately; the compared geometries have the same Bayes accuracy at each C/overlap level. This specific collinear geometry does not establish a general effect of dimensionality.
 <!-- two-feature-overlap:end -->
 
+<!-- ten-feature-overlap:start -->
+**Ten-feature extension (19 November 2026):** 2–5 classes, 11 calibrated joint-overlap levels, 20 datasets and 100 starts per K=2–6 add **440,000 configurations**. All figures have linear axes.
+
+SDB recovers two and three disjoint classes, but still under-counts four and five classes. The success at complete separation does not extend across the overlap continuum.
+
+Correct K selections at complete separation:
+
+| Classes | DB / k-means | DB / hardened FCM | SDB / FCM |
+| :-- | :-- | :-- | :-- |
+| 2 | 20/20 | 20/20 | 20/20 |
+| 3 | 20/20 | 20/20 | 20/20 |
+| 4 | 20/20 | 20/20 | 0/20 |
+| 5 | 20/20 | 17/20 | 0/20 |
+
+At 10% remaining joint overlap:
+
+| Classes | DB / k-means | DB / hardened FCM | SDB / FCM |
+| :-- | :-- | :-- | :-- |
+| 2 | 20/20 | 19/20 | 20/20 |
+| 3 | 0/20 | 0/20 | 0/20 |
+| 4 | 0/20 | 0/20 | 0/20 |
+| 5 | 0/20 | 0/20 | 0/20 |
+
+**Ten-dimensional FCM frequently produces nearly coincident centers.** Primary results select requested K by mean index; the technical note separately reports distinct-cluster screening and held-out accuracy. Undefined scores are retained as +inf with reasons and invalidate that candidate's mean, rather than being silently discarded. These results do not establish a general benefit from additional features.
+
+Extending all **18,563 capped FCM fits** to 10,000 iterations leaves **747** at the cap and changes **1/2,640 K selections**, including **0/880 SDB selections**. Primary results retain the 1,000-iteration protocol.
+
+![Ten-feature class-count recovery](results/figures/overlap_10features_2_to_5_recovery.png)
+
+For two classes at 10% overlap, extending the capped fits raises DB/hardened FCM from 19/20 to 20/20, matching SDB's unchanged 20/20; the primary one-dataset difference is not stable to this check.
+
+Read [Technical note 6: ten features](docs/TECHNICAL_NOTES_TEN_FEATURES.md) for every overlap level, four projected dataset examples per class count, the [one/two/three/ten-feature comparison](results/figures/overlap_1_vs_2_vs_3_vs_10_features.png), numerical calibration, validity diagnostics and reproducible synthetic data. The [completed three-feature studies](docs/TECHNICAL_NOTES_THREE_FEATURES.md) cover 2–4 classes; their five-class extension remains interrupted and unavailable.
+<!-- ten-feature-overlap:end -->
+
 ## Testing
 
-`pytest -q` covers analytic toy examples, cluster-order permutation, translation/scale invariance, degenerate inputs, FCM membership constraints, and a scikit-learn reference check. It also checks the public 100-seed aggregate tables and abstract comparison counts, the exact synthetic overlap levels and Bayes references, binary-score regression, and all eight complete 110,000-configuration supplementary grids, including joint-overlap quadrature and two-feature membership checks. An additional local test validates all 68,400 original-data configurations when the private individual-score files are present. `scripts/matlab/test_sdb.m` checks MATLAB against the same analytic fixture. MATLAB has not been executed in the authoring environment; run it in your local MATLAB installation or CI runner.
+`pytest -q` covers analytic toy examples, cluster-order permutation, translation/scale invariance, degenerate inputs, FCM membership constraints, and a scikit-learn reference check. It also checks the public 100-seed aggregate tables and abstract comparison counts, the exact synthetic overlap levels and Bayes references, binary-score regression, and all fifteen complete 110,000-configuration supplementary grids, including joint-overlap quadrature, ten-feature degeneracy handling and checkpoint compatibility checks. An additional local test validates all 68,400 original-data configurations when the private individual-score files are present. `scripts/matlab/test_sdb.m` checks MATLAB against the same analytic fixture. MATLAB has not been executed in the authoring environment; run it in your local MATLAB installation or CI runner.
 
 ## Citation
 

@@ -9,6 +9,9 @@ __pycache__/
 coverage.xml
 .coverage
 htmlcov/
+.local_overlap_checkpoints/
+# Shared calibration cache; checked copies are saved in every ten-feature bundle.
+results/supplementary_overlap_10features_calibration/
 data/original/*
 !data/original/.gitkeep
 data/benchmarks/

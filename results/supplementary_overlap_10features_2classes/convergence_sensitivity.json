@@ -1,0 +1,15 @@
+{
+  "rerun_configurations": 2091,
+  "extended_max_iter": 10000,
+  "still_at_limit": 178,
+  "maximum_fixed_point_residual": 9.059798780075567e-07,
+  "changed_k_choices": 1,
+  "total_k_choices": 660,
+  "changed_sdb_choices": 0,
+  "changed_recovery_frequencies": 1,
+  "undefined_indices_extended": {
+    "SDB_fcm": 616,
+    "DB_fcm_hard": 0
+  },
+  "note": "Primary files retain the original 1,000-iteration protocol. Extended refits use the same seeds and tolerance; degenerate scores remain +inf, never silently omitted."
+}

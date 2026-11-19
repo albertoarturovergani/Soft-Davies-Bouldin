@@ -1,0 +1,55 @@
+{
+  "configuration": {
+    "n_classes": 2,
+    "n_features": 10,
+    "replicates": 20,
+    "initializations": 100,
+    "steps": 10,
+    "n_per_class": 100,
+    "test_per_class": 2000,
+    "max_k": 6,
+    "max_iter": 1000,
+    "tol": 1e-07,
+    "separations": [
+      0.0,
+      0.02935565015782667,
+      0.05932589298378638,
+      0.09048310169828937,
+      0.12354289586785214,
+      0.15948968642286046,
+      0.19984114863421176,
+      0.2472569716656589,
+      0.3073894410393899,
+      0.39717668023273445,
+      2.0
+    ]
+  },
+  "workers": 12,
+  "python": "3.12.14",
+  "packages": {
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "threadpoolctl": "3.8.0"
+  },
+  "current_invocation_seconds": 363.1470035999082,
+  "restored_cells": 0,
+  "code_sha256": {
+    "supplementary_overlap_ten_features.py": "d4aa7ed59c6ea3506a5eb19d787ac2b6fa0d5f79427449f389b851ea38578067",
+    "ten_feature_geometry.py": "47d190ccda411c49e736eac1f9e352362ec1d4cffdcf054ce95e8bdaf274b2f2",
+    "supplementary_overlap.py": "a6a9caec6230b61b410af8d721b071587c21f9c2745175cb649ce1bc4d9c98a0",
+    "overlap_geometry.py": "3fed4b150e415f06a958abcc8d969cf60b2c033d04c5f30c5f7c47884ab9bdf3",
+    "sdb/fcm.py": "d473f2c1959bf7283d341047300ae0c6b83965d6f1bf221ecda0fe635e7b6c0a",
+    "sdb/index.py": "3b3269e42c34dd9a13c6dc8fe567d170443a7497aa87be151096d90525e9352e"
+  },
+  "score_sha256": "8138084fb14972319b5fbf0a9121cd95c9cc7e86136a8d56aa0298633ea7c13f",
+  "geometry": "Ten informative features; independent Triangular(-1,0,1) noise within class; equal priors; equally spaced centers on (1,...,1).",
+  "random_design": "Feature 1/order: SeedSequence([20261117,replicate,test_flag]); feature r>=2: independent SeedSequence([20261117,replicate,test_flag,r]); fixed base draws across steps.",
+  "index_definition": "Published SDB q=1, p=2, membership_power=1; FCM m=2; unchanged implementations.",
+  "undefined_score_policy": "Mathematical degeneracy returns +inf with a reason; arithmetic mean includes every initialization. Only finite mean candidates are eligible. No eligible candidate is selected_k=0, counted as failure.",
+  "primary_selection": "Minimize the mean of all starts over requested K=2..6; ties favor smaller K. DB/hardened FCM can use fewer occupied labels than requested; occupancy is recorded.",
+  "distinct_cluster_sensitivity": "Same means, additionally reject SDB candidates if any start has center separation/data RMS < 1e-6; reject hardened FCM candidates on that condition or any start having fewer occupied labels than requested. This is a diagnostic, not a change to the published index.",
+  "overlap_definition": "Numerically calibrated adjacent-pair integral min(f_i,f_(i+1)) in R^10; nominal 100%,90%,...,0%. See calibration.json for independent QMC checks."
+}

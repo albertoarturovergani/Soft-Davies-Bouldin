@@ -4,6 +4,8 @@
 
 The protocol retains **2–5 classes, 11 nominal joint-overlap levels, 20 independent datasets and 100 initializations per candidate K=2–6**. The extension adds **440,000 configurations and 880,000 primary algorithm fits**. All 100 coordinates are informative, with independent triangular noise within class and class centers on the same diagonal line. These are count-selection frequencies across datasets, not classification accuracy or success rates across the 100 starts.
 
+Follow-up: [Technical note 8: why SDB under-counts separated classes](TECHNICAL_NOTES_SDB_UNDERCOUNTING.md).
+
 ## Main result
 
 For SDB at complete separation: **2 classes: 20/20; 3 classes: 20/20; 4 classes: 0/20; 5 classes: 0/20**.

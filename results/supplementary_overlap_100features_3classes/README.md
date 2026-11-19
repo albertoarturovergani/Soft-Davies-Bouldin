@@ -6,6 +6,6 @@ At disjointness, the mean-index rules recover K=3 in **20/20 for DB/k-means**, *
 
 The original FCM/SDB implementation is unchanged. There are 106,000 nearly coincident FCM fits, and undefined-score counts are {'DB_kmeans': 0, 'DB_fcm_hard': 0, 'SDB_fcm': 42}. Undefined scores remain +inf and are included in every 100-start mean; selected_k=0 means no eligible finite-mean candidate. Distinct-center screening is a separate diagnostic, not the primary rule.
 
-Extending 0 capped FCM fits to 10,000 iterations leaves 0 capped and changes 0/660 K choices, including 0/220 SDB choices. Refits reconstruct the exact shifts from provenance JSON. Primary files retain the 1,000-iteration protocol.
+No FCM fit reached the 1,000-iteration cap, so no 10,000-iteration refit was needed. The convergence files record this zero-refit audit; they are not an independent longer-iteration test.
 
 The bundle contains the full synthetic score grid, mean-index choices, held-out performance, examples with all 100 coordinates, overlap calibration and independent numerical checks, degeneracy diagnostics, convergence sensitivity and source/data hashes. No participant or fMRI data are included.

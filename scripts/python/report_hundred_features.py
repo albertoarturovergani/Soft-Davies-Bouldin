@@ -42,6 +42,9 @@ def bundle(c):
     cv=read_json(c,'convergence_sensitivity.json')
     dg=read_json(c,'diagnostics.json')
     v=counts(c,10)
+    convergence=(f"Extending {cv['rerun_configurations']:,} capped FCM fits to 10,000 iterations leaves {cv['still_at_limit']} capped and changes {cv['changed_k_choices']}/660 K choices, including {cv['changed_sdb_choices']}/220 SDB choices. Refits reconstruct the exact shifts from provenance JSON. Primary files retain the 1,000-iteration protocol."
+                 if cv['rerun_configurations'] else
+                 'No FCM fit reached the 1,000-iteration cap, so no 10,000-iteration refit was needed. The convergence files record this zero-refit audit; they are not an independent longer-iteration test.')
     content=f'''# One hundred features, {c} classes — supplementary analysis
 
 One hundred informative triangular coordinates, independent noise within class, equal priors and collinear centers. Eleven calibrated joint-overlap levels (100%, 90%, …, 0%), 20 independent datasets and 100 starts per K=2–6 give **110,000 configurations**. Each class supplies 100 training and 2,000 held-out samples. All new plot axes are linear.
@@ -50,7 +53,7 @@ At disjointness, the mean-index rules recover K={c} in **{v[0]}/20 for DB/k-mean
 
 The original FCM/SDB implementation is unchanged. There are {dg['near_coincident_fcm_fits']:,} nearly coincident FCM fits, and undefined-score counts are {dg['undefined_indices']}. Undefined scores remain +inf and are included in every 100-start mean; selected_k=0 means no eligible finite-mean candidate. Distinct-center screening is a separate diagnostic, not the primary rule.
 
-Extending {cv['rerun_configurations']:,} capped FCM fits to 10,000 iterations leaves {cv['still_at_limit']} capped and changes {cv['changed_k_choices']}/660 K choices, including {cv['changed_sdb_choices']}/220 SDB choices. Refits reconstruct the exact shifts from provenance JSON. Primary files retain the 1,000-iteration protocol.
+{convergence}
 
 The bundle contains the full synthetic score grid, mean-index choices, held-out performance, examples with all 100 coordinates, overlap calibration and independent numerical checks, degeneracy diagnostics, convergence sensitivity and source/data hashes. No participant or fMRI data are included.
 '''
@@ -70,7 +73,9 @@ def main(local_report_dir=None):
     left=sum(v['still_at_limit'] for v in checks.values())
     changed=sum(v['changed_k_choices'] for v in checks.values())
     sdb_changed=sum(v['changed_sdb_choices'] for v in checks.values())
-    convergence=f'Extending all **{cap:,} capped FCM fits** to 10,000 iterations leaves **{left}** at the cap and changes **{changed}/2,640 K choices**, including **{sdb_changed}/880 SDB choices**. Primary results retain the 1,000-iteration protocol.'
+    convergence=(f'Extending all **{cap:,} capped FCM fits** to 10,000 iterations leaves **{left}** at the cap and changes **{changed}/2,640 K choices**, including **{sdb_changed}/880 SDB choices**. Primary results retain the 1,000-iteration protocol.'
+                 if cap else
+                 '**None of the 440,000 primary FCM fits reached the 1,000-iteration cap**, so no 10,000-iteration refit was needed. The zero-refit audit is not an independent longer-iteration test. Membership convergence does not imply distinct centers or a correct K.')
     calibrated=pd.read_csv(folder(2)/'overlap_calibration.csv')
     metadata=read_json(2,'calibration.json')
     endpoint_choices=[]
@@ -96,6 +101,13 @@ def main(local_report_dir=None):
             changed_rates.append([c,f'{100-10*r.step}%',LABELS[INDEXES.index(r.metric)],f'{round(20*r.primary_correct_rate)}/20',f'{round(20*r.extended_correct_rate)}/20'])
     rate_table=table(['Classes','Joint overlap','Criterion','Primary recovery','Extended recovery'],changed_rates) if changed_rates else 'No correct-count frequency changes at any sampled level.\n'
     endpoint_summary='; '.join(f'{c} classes: {counts(c,10)[2]}/20' for c in range(2,6))
+    binary_comparison=(f"At 10% remaining overlap, binary SDB recovery changes from **{counts(2,9,10)[2]}/20 with ten features** to **{counts(2,9)[2]}/20 with one hundred features** under the primary mean-index rule. The hundred-feature count becomes **{counts(2,9,name='distinct_clusters_selected_k.csv')[2]}/20** after distinct-center screening. Nominal K recovery in a nearly collapsed solution should not be presented as a well-separated clustering.")
+    all_interior_screened_out=True
+    for c in range(2,6):
+        screened=pd.read_csv(folder(c)/'distinct_clusters_selected_k.csv')
+        interior=screened[screened.step.between(1,9)&screened.metric.isin(['DB_fcm_hard','SDB_fcm'])]
+        all_interior_screened_out &= bool(interior.selected_k.eq(0).all())
+    interior_message=('Every FCM candidate fails the conservative distinct-center screen at all nine interior overlap levels in all four hundred-feature studies.' if all_interior_screened_out else 'Per-level distinct-center screening is reported separately below.')
     note=f'''# Technical note 7 — one hundred features across the overlap continuum
 
 **19 November 2026. Supplementary synthetic analysis outside the 2018 paper. All new plot axes are linear.**
@@ -112,6 +124,10 @@ Correct generating-K selections with **completely disjoint class supports**:
 At **10% remaining joint overlap**:
 
 {table(headers,near)}
+{binary_comparison}
+
+{interior_message}
+
 ![Hundred-feature recovery from two to five classes](../results/figures/overlap_100features_2_to_5_recovery.png)
 
 The primary curves select the requested K by its arithmetic mean index. In high dimensions, nearly coincident FCM centers can still give numerical hard labels, or a requested K that happens to equal the generating count. Neither alone establishes distinct recovered classes. The separate screening and held-out diagnostics below are essential to interpretation.
@@ -219,6 +235,8 @@ Correct generating-K selections with disjoint supports:
 At 10% remaining joint overlap:
 
 {table(headers,near)}
+{binary_comparison}
+
 **Numerical K selection must be distinguished from distinct recovered clusters.** The report separately measures nearly coincident FCM centers, occupied hard-label groups, conservative candidate screening and held-out accuracy at fixed K. Undefined scores remain +inf and are retained in every 100-start mean.
 
 {convergence}
@@ -247,6 +265,10 @@ Read [Technical note 7: one hundred features](docs/TECHNICAL_NOTES_HUNDRED_FEATU
         relative=Path(os.path.relpath(ROOT,local_report_dir)).as_posix()
         css='body{font:17px/1.55 system-ui;max-width:1200px;margin:40px auto;padding:0 24px;color:#173047}h1,h2{color:#10283d}table{border-collapse:collapse;width:100%;margin:20px 0}td,th{border:1px solid #ccd5dc;padding:9px;text-align:left}th{background:#edf4f8}img{max-width:100%;height:auto}a{color:#166099}'
         report='<!doctype html><html lang="it"><meta charset="utf-8"><title>SDB: cento feature</title><style>'+css+'</style><body><h1>Cento feature: confronto completo</h1><p>19 novembre 2026 · 2–5 classi · 11 livelli di sovrapposizione · 20 dataset · 100 inizializzazioni per K=2–6.</p><h2>Classi disgiunte</h2>'+htable(headers,endpoint)+'<h2>Sovrapposizione residua del 10%</h2>'+htable(headers,near)+'<p>Un K numericamente corretto non garantisce centri FCM distinti. Le diagnostiche sotto separano scelta del numero, degenerazione e accuratezza a K fissato.</p>'
+        report+=f'<p>Nel caso binario con sovrapposizione residua del 10%, SDB passa da {counts(2,9,10)[2]}/20 successi con 10 feature a {counts(2,9)[2]}/20 con 100 feature. Dopo il controllo sui centri distinti, il risultato a 100 feature è {counts(2,9,name="distinct_clusters_selected_k.csv")[2]}/20.</p>'
+        if all_interior_screened_out:
+            report+='<p>Per tutte le quattro numerosità di classe, nessun candidato FCM supera il controllo conservativo sui centri distinti ai nove livelli intermedi di sovrapposizione. La convergenza delle membership può quindi accompagnarsi a centri quasi coincidenti.</p>'
+        report+='<p>La griglia non risolve le transizioni sotto il 10% di sovrapposizione residua. Tutte le feature sono informative, ma i centri restano allineati: questo esperimento descrive una geometria specifica e non dimostra un vantaggio generale del numero di feature.</p>'
         report+=f'<p><a href="{URL}">Technical note 7 su GitHub</a> · <a href="{relative}/docs/TECHNICAL_NOTES_HUNDRED_FEATURES.md">Nota completa locale</a></p>'
         for name in ['overlap_100features_2_to_5_recovery','overlap_1_vs_2_vs_3_vs_10_vs_100_features']:
             report+=f'<img src="{relative}/results/figures/{name}.png" alt="Confronto del numero di cluster">'

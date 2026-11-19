@@ -1,0 +1,29 @@
+{
+  "source_archive_sha256": {
+    "4": "523a98bd1a2849fa5e7a65ec3abdd0309c27914d90d6b3388a51ab32e35568ff",
+    "5": "cc6fcac3aebb3b346913069444c4515b8c17121c761b88ff7b770acc3a7d0396"
+  },
+  "primary_source_sha256": {
+    "supplementary_overlap_hundred_features.py": "0e63ac586873e191b7691d28265d399decc17131290a3e7bc7e1eb3dd723d836",
+    "hundred_feature_geometry.py": "1b41743e3ed2d51536e708a75bf934eeb33eec6ef380f9c7ec7d8809c1f3b1ee",
+    "supplementary_overlap.py": "a6a9caec6230b61b410af8d721b071587c21f9c2745175cb649ce1bc4d9c98a0",
+    "overlap_geometry.py": "3fed4b150e415f06a958abcc8d969cf60b2c033d04c5f30c5f7c47884ab9bdf3",
+    "ten_feature_geometry.py": "47d190ccda411c49e736eac1f9e352362ec1d4cffdcf054ce95e8bdaf274b2f2",
+    "sdb/fcm.py": "d473f2c1959bf7283d341047300ae0c6b83965d6f1bf221ecda0fe635e7b6c0a",
+    "sdb/index.py": "3b3269e42c34dd9a13c6dc8fe567d170443a7497aa87be151096d90525e9352e"
+  },
+  "diagnostic_source_sha256": "a702a64a2cec88264ca06a8ada71cd01fc32b6cc0f24270313b95f7980111d50",
+  "python": "3.12.14",
+  "packages": {
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "threadpoolctl": "3.8.0"
+  },
+  "reproduced_fits": 200,
+  "protocol": "Disjoint endpoint only, 20 original datasets for each C=4,5; K=2..6. Reproduce the lowest native FCM objective among the original 100 starts at each K. Verify the original objective and SDB. No selection uses true labels.",
+  "controls": "Same centers and memberships. Hardened SDB uses hard masses; coupled moment replaces E[r]E[u] with E[ur]; conditional radius replaces it with E[ur]/E[u]. These are diagnostic formula changes, not validated replacement indices. DB_hardened recomputes centers from hard labels.",
+  "deterministic": "All nontrivial set partitions of 4 and 5 noiseless points, on a line and a regular simplex, minimum pair distance 1. Centers are means, memberships crisp; undefined coincident-center scores are +inf."
+}

@@ -92,6 +92,51 @@ def test_cell_execution_and_checkpoint_guard(tmp_path):
         checkpoint_manifest(tmp_path,{**config,'initializations':3})
 
 
+def test_convergence_refits_resume_without_recomputing_completed_fits(tmp_path,monkeypatch,capsys):
+    import json
+    import check_ten_feature_convergence as checker
+    config = dict(n_classes=2,n_features=10,replicates=1,initializations=2,steps=10,
+                  n_per_class=15,test_per_class=30,max_k=2,max_iter=1,tol=1e-7,separations=[0.]*10+[2.])
+    _,_,rows,_ = run_cell((config,0,10))
+    directory = tmp_path/'study'
+    directory.mkdir()
+    raw = pd.DataFrame(rows)
+    raw.to_csv(directory/'per_initialization.csv.gz',index=False)
+    select_k(score_means(raw)).to_csv(directory/'selected_k.csv',index=False)
+    (directory/'provenance.json').write_text(json.dumps({'configuration':config}))
+    cache = tmp_path/'checkpoints'
+    checker.main(directory,1,cache)
+    expected = (directory/'convergence_sensitivity_choices.csv').read_bytes()
+    assert len(list(cache.glob('fit_*.json'))) == 2
+    # A partially completed cache must also resume, preserving the other fit.
+    (cache/'fit_000001.json').unlink()
+    checker.main(directory,1,cache)
+    assert 'restored 1/2' in capsys.readouterr().out
+    def forbidden(_):
+        raise AssertionError('Completed refit should not run again')
+    monkeypatch.setattr(checker,'extend',forbidden)
+    checker.main(directory,1,cache)
+    assert (directory/'convergence_sensitivity_choices.csv').read_bytes() == expected
+
+
+def test_resume_preserves_exact_saved_shifts_instead_of_csv_rounding(tmp_path):
+    from resume_ten_feature_overlap import configuration_for
+    shifts = [0.,.02935565015782667,.05932589298378638,.09048310169828937,
+              .12354289586785214,.15948968642286046,.19984114863421176,
+              .2472569716656589,.3073894410393899,.39717668023273445,2.]
+    exact = pd.DataFrame({'per_feature_shift':shifts})
+    config = configuration_for(3,exact,tmp_path)
+    checkpoint_manifest(tmp_path,config)
+    csv = tmp_path/'calibration.csv'
+    exact.to_csv(csv,index=False,float_format='%.16g')
+    reloaded = pd.read_csv(csv)
+    assert reloaded.per_feature_shift.tolist() != shifts
+    assert configuration_for(3,reloaded,tmp_path)['separations'] == shifts
+    reloaded.loc[4,'per_feature_shift'] += .001
+    with pytest.raises(ValueError,match='Calibration disagrees'):
+        configuration_for(3,reloaded,tmp_path)
+
+
 @pytest.mark.parametrize('classes',[2,3,4,5])
 def test_saved_ten_feature_study(classes):
     import json

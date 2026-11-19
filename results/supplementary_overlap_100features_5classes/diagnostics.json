@@ -1,0 +1,15 @@
+{
+  "configurations": 110000,
+  "index_values": 330000,
+  "undefined_indices": {
+    "DB_kmeans": 0,
+    "DB_fcm_hard": 0,
+    "SDB_fcm": 72
+  },
+  "fcm_at_limit": 43,
+  "kmeans_at_limit": 0,
+  "near_coincident_fcm_fits": 102064,
+  "fcm_hard_cluster_count_below_requested": 31880,
+  "max_fcm_fixed_point_residual": 3.968550925548264e-06,
+  "collapse_relative_threshold": 1e-06
+}

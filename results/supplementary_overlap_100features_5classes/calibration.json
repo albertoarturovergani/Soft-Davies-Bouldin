@@ -1,0 +1,92 @@
+{
+  "settings": {
+    "features": 100,
+    "fft_power": 19,
+    "fft_extent": 64.0,
+    "reference_fft_power": 21,
+    "reference_extent": 128.0,
+    "qmc_power": 18,
+    "qmc_seeds": [
+      519191,
+      519192,
+      519193,
+      519194
+    ],
+    "source_sha256": "1b41743e3ed2d51536e708a75bf934eeb33eec6ef380f9c7ec7d8809c1f3b1ee"
+  },
+  "exact_shifts": [
+    0.0,
+    0.007997467188207352,
+    0.0161442387389824,
+    0.024599977613679075,
+    0.03356206665451834,
+    0.04330323382646773,
+    0.05424571476691184,
+    0.06713667987880635,
+    0.08357323284770866,
+    0.10838176668868116,
+    2.0
+  ],
+  "fft_tolerance": 2e-05,
+  "domain_tolerance": 1e-08,
+  "qmc_check_tolerance": 0.0015,
+  "qmc_estimates": [
+    [
+      1.0,
+      0.8999790589931825,
+      0.7999571799447528,
+      0.6999463519963359,
+      0.599918734051945,
+      0.49985132806492344,
+      0.39981543449216084,
+      0.29987696378761436,
+      0.20001625181307245,
+      0.10009805574832956,
+      0.0
+    ],
+    [
+      1.0,
+      0.8999038187737154,
+      0.7998666072035845,
+      0.6999179762642098,
+      0.6000544160004933,
+      0.5002159934471271,
+      0.4003598491166277,
+      0.3004187682133739,
+      0.20034869793959842,
+      0.10007486237348295,
+      0.0
+    ],
+    [
+      1.0,
+      0.9001130915812774,
+      0.8002738455382246,
+      0.7004015153553432,
+      0.6004026172595733,
+      0.5003395121676604,
+      0.40023421890764227,
+      0.3000838434594916,
+      0.19992938272952504,
+      0.09986472261862164,
+      0.0
+    ],
+    [
+      1.0,
+      0.8999471742976932,
+      0.7998814110778546,
+      0.6998022679927811,
+      0.5997127748817623,
+      0.4996715117218593,
+      0.39968186999088373,
+      0.2997686063239963,
+      0.1999472145906231,
+      0.10023981160929941,
+      0.0
+    ]
+  ],
+  "root_tolerance": 1e-10,
+  "maximum_fft_refinement_error": 4.2046178705401616e-07,
+  "maximum_domain_difference": 2.3092638912203256e-14,
+  "maximum_qmc_difference": 6.937119492250732e-05,
+  "method": "Joint overlap of triangular product densities via likelihood-ratio convolution.\n\nOn the common support, Y=log[t(X-d)/t(X)] is strictly increasing in X.\nIts conditional CDF has an analytic inverse. Independent coordinates add Y;\nreflection symmetry gives overlap = 2 * M**D * P(sum(Y) > 0), where M is\nthe one-coordinate common-support probability under the first density.\nFFT bin convolution uses half the central-bin mass at the zero boundary.\nGrid refinement, domain widening and independent conditional Sobol quadrature\ncheck this numerical approximation; none is claimed as a rigorous error bound.\n"
+}
